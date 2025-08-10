@@ -6,7 +6,16 @@
 <title>Diaper Tracker V7</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
-:root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f}
+:root{
+  --ink:#27314a;
+  --muted:#6e7a96;
+  --card:#fff;
+  --brand:#6a8dff;
+  --line:#e9e6ff;
+  --green:#1a7f37;
+  --red:#d32f2f;
+  --pink:#ff9fc7;
+}
 body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fffaff,#f7fbff);color:var(--ink)}
 .container{max-width:1320px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
 .panel,.calendar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
@@ -14,15 +23,25 @@ body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:li
 .btn.ghost{background:transparent;border:1px solid var(--line);color:#1a2442}
 .grid{display:grid;gap:8px}
 .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-h1{margin:8px 0 0;text-align:center}
+h1{
+  margin:10px 0 0;
+  text-align:center;
+  font-family:'Comic Sans MS','Baloo 2','Quicksand',cursive;
+  font-weight:800;
+  letter-spacing:.5px;
+  color:#ff86bd;
+  text-shadow:0 1px 0 #ffe3ef, 0 3px 8px rgba(255,134,189,.25);
+  font-size:28px;
+}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
-.tabs{display:flex;gap:8px;margin:6px 0}
-.tab{padding:6px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer}
-.tab.active{background:#edf2ff;border-color:#c7d2fe}
+/* Onglets en images */
+.tabs{display:flex;gap:10px;margin:6px 0;justify-content:space-between}
+.tabs img.tab{width:72px;height:72px;padding:4px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:.2s}
+.tabs img.tab.active{border-color:#ffc7de;box-shadow:0 0 0 4px #fff, 0 0 0 6px #ffe6f2}
 .tab-content{display:none}.tab-content.show{display:block}
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
-/* densifier le calendrier sans réduire la taille des miniatures */
+/* calendrier dense avec miniatures lisibles */
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(80px,1fr));gap:3px}
 .day-head{color:var(--muted);text-align:center;font-weight:700;font-size:12px}
 .day{min-height:100px;border:1px solid var(--line);border-radius:10px;padding:4px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
@@ -36,7 +55,7 @@ h1{margin:8px 0 0;text-align:center}
 .progress{display:grid;gap:8px;margin-bottom:8px}
 .progress-row{display:grid;grid-template-columns:84px 1fr max-content;gap:8px;align-items:center}
 .progress-row .bar{height:10px;background:#f5f6ff;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-.progress-row .bar>div{height:100%;width:0;background:linear-gradient(90deg,#bcd1ff,#6a8dff);transition:width .3s}
+.progress-row .bar>div{height:100%;width:0;background:linear-gradient(90deg,#ffdbec,#ff86bd);transition:width .3s}
 .stat-line{display:flex;justify-content:space-between;margin-top:4px}
 .small{color:#6e7a96;font-size:12px}
 .pos{color:#1a7f37;font-weight:700} .neg{color:#d32f2f;font-weight:700}
@@ -70,23 +89,26 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 <main class="container">
   <aside class="panel">
-    
-    <div class="tabs" style="justify-content:space-between">
-      <img class="tab active" data-tab="actions" src="images/action.webp" alt="Actions" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
-      <img class="tab" data-tab="objectifs" src="images/objectif.webp" alt="Objectifs" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
-      <img class="tab" data-tab="rules" src="images/regles-bebe.webp" alt="Règles de bébé" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
-      <img class="tab" data-tab="points" src="images/points.webp" alt="Modifier points" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
+    <!-- Onglets images -->
+    <div class="tabs">
+      <img class="tab active" data-tab="actions" src="images/action.webp" alt="Actions">
+      <img class="tab" data-tab="objectifs" src="images/objectif.webp" alt="Objectifs">
+      <img class="tab" data-tab="rules" src="images/regles-bebe.webp" alt="Règles de bébé">
+      <img class="tab" data-tab="points" src="images/points.webp" alt="Modifier points">
     </div>
+
     <div id="tab-actions" class="tab-content show">
       <h3>Compteurs</h3>
       <div class="progress">
-        <div class="progress-row"><div>Semaine</div><div class="bar"><div id="weeklyBar"></div></div><div><b id="weeklyPts">0</b> pts<br><span id="weeklyGoal" class="goal"></span></div></div>
-        <div class="progress-row"><div>Mois</div><div class="bar"><div id="monthlyBar"></div></div><div><b id="monthlyPts">0</b> pts<br><span id="monthlyGoal" class="goal"></span></div></div>
-      </div>
-      <div class="progress-row">
-        <div>Couches</div>
-        <div class="bar"><div id="diapersBar"></div></div>
-        <div><b id="monthDiapers">0</b> utilisées</div>
+        <div class="progress-row">
+          <div>Semaine</div><div class="bar"><div id="weeklyBar"></div></div><div><b id="weeklyPts">0</b> pts<br><span id="weeklyGoal" class="goal"></span></div>
+        </div>
+        <div class="progress-row">
+          <div>Mois</div><div class="bar"><div id="monthlyBar"></div></div><div><b id="monthlyPts">0</b> pts<br><span id="monthlyGoal" class="goal"></span></div>
+        </div>
+        <div class="progress-row">
+          <div>Couches</div><div class="bar"><div id="diapersBar"></div></div><div><b id="monthDiapers">0</b> utilisées</div>
+        </div>
       </div>
       <hr/>
 
@@ -101,6 +123,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
         <small class="small">Ce bandeau sert à créer de nouvelles actions. Elles apparaîtront ensuite dans le détail de chaque journée.</small>
       </form>
 
+      <!-- Légende état -->
       <div class="legend-panel">
         <div class="it"><img id="imgClean" alt=""><span>propre</span><span class="small">(0 pt)</span></div>
         <div class="it"><img id="imgWet" alt=""><span>pipi</span><span class="small">= <b id="wetPts">2</b> pts</span></div>
@@ -209,8 +232,13 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </div>
 
 <script>
-const KEYS={entries:'dt_v6_entries',tasks:'dt_v6_tasks',rules:'dt_v6_rules',images:'dt_v6_images',babyRules:'dt_v6_baby_rules'};
+// clés de stockage (V7)
+const KEYS={entries:'dt_v7_entries',tasks:'dt_v7_tasks',rules:'dt_v7_rules',images:'dt_v7_images',babyRules:'dt_v7_baby_rules'};
+
+// points par défaut
 let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5};
+
+// actions par défaut
 let tasks=JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
  {id:'no_alcohol',name:'No alcohol',points:1,icon:'images/no_alcohol.webp'},
  {id:'exercise',name:'Sport',points:2,icon:'images/sport.webp'},
@@ -220,12 +248,16 @@ let tasks=JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
  {id:'friends_diaper',name:'couche avec des amis',points:5,icon:'images/diaper_friend.webp'},
  {id:'diaper_family',name:'Porter des couches en famille',points:20,icon:'images/diaper_family.webp'}
 ];
+
+// assets images
 let images=JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
  state_clean:'images/diaper_clean.webp',
  state_wet:'images/diaper_wet.webp',
  state_messy:'images/diaper_messy.webp',
  slip:'images/slip.webp'
 };
+
+// données des jours
 let entries=JSON.parse(localStorage.getItem(KEYS.entries)||'{}'); 
 let babyRules=JSON.parse(localStorage.getItem(KEYS.babyRules)||'[]');
 
@@ -239,7 +271,7 @@ function saveAll(){
 function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1}; }
 function fmt(d){return d.toISOString().slice(0,10);}
 
-// Legend images
+// Légende (mini)
 document.getElementById('imgClean').src=images.state_clean;
 document.getElementById('imgWet').src=images.state_wet;
 document.getElementById('imgMessy').src=images.state_messy;
@@ -248,16 +280,16 @@ document.getElementById('sw').src=images.state_wet;
 document.getElementById('sm').src=images.state_messy;
 document.getElementById('ss').src=images.slip;
 
-// Tabs
-document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+// Tabs (images cliquables)
+document.querySelectorAll('.tabs .tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('show'));
   t.classList.add('active'); document.getElementById('tab-'+t.dataset.tab).classList.add('show');
 });
 
+// --- Calcul points ---
+// version mutante (utilisée lors de l'édition d'un jour dans la modale)
 function dayPoints(key){
-  // *** Mutating version used when a day is edited ***
-
   ensureDay(key);
   const d = entries[key];
 
@@ -268,7 +300,7 @@ function dayPoints(key){
   const isZero = Number(d.diapersUsed) === 0;
   const zeroPenalty = isZero ? (Number.isFinite(zero) ? zero : -5) : 0;
 
-  // si 0 couche -> aucun point de couche (pas de wet/sale)
+  // si 0 couche -> aucun point de couche
   const diaperPts = isZero ? 0 : ((st >= 1 ? wetPts : 0) + (st === 2 ? salePts : 0));
 
   const checksPts = Object.entries(d.checks).reduce((sum, [id, v]) => {
@@ -281,8 +313,7 @@ function dayPoints(key){
   return diaperPts + checksPts + zeroPenalty;
 }
 
-
-// Non‑mutating calcul (ne crée pas d'entrée)
+// version non‑mutante (pour calendrier/compteurs sans créer d'entrées fantômes)
 function dayPointsSafe(key){
   const d = entries[key];
   if(!d) return 0;
@@ -299,7 +330,7 @@ function dayPointsSafe(key){
   return diaperPts + checksPts + zeroPenalty;
 }
 
-// Calendar
+// --- Calendrier ---
 const calGrid=document.getElementById('calGrid'); const monthLabel=document.getElementById('monthLabel'); let viewing=new Date(); viewing.setDate(1);
 function firstWeekday(y,m){return (new Date(y,m,1).getDay()+6)%7;}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
@@ -310,28 +341,32 @@ function renderCalendar(){
   for(let i=0;i<firstWeekday(y,m);i++){const b=document.createElement('div');b.className='day';b.style.visibility='hidden';calGrid.appendChild(b);}
   const total=daysInMonth(y,m); const todayKey=fmt(new Date());
   for(let d=1; d<=total; d++){
-    const key=fmt(new Date(y,m,d,12)); if(!entries[key]) entries[key]={diaperState:0,checks:{},diapersUsed:1};
-    const st=entries[key].diaperState; const isFuture=key>todayKey;
-    let img=null; 
-    if(Number(entries[key].diapersUsed)===0){ img=images.slip; }
+    const key=fmt(new Date(y,m,d,12));
+    const st=(entries[key]&&entries[key].diaperState)||0;
+    const isFuture=key>todayKey;
+    let img=null;
+    if(entries[key] && Number(entries[key].diapersUsed)===0){ img=images.slip; }
     else if(!isFuture){ img = st===2?images.state_messy: st===1?images.state_wet: images.state_clean; }
     else { img=images.slip; } // jours futurs -> slip
-
     const cell=document.createElement('div'); cell.className='day';
-    cell.innerHTML=`<div class="num">${d}</div><div class="thumb">${img?`<img src="${img}" alt="">`:''}</div><div class="pts">${dayPoints(key)} pts</div>`;
+    cell.innerHTML=`<div class="num">${d}</div><div class="thumb">${img?`<img src="${img}" alt="">`:''}</div><div class="pts">${dayPointsSafe(key)} pts</div>`;
     cell.onclick=()=>openDay(key); calGrid.appendChild(cell);
   }
-  // weekly / monthly
-  function dayPointsLocal(k){return dayPoints(k);}
+  // weekly / monthly (sans créer d'entrées)
   const now=new Date(); const s=(d=>{const x=new Date(d);x.setHours(0,0,0,0);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x;})(now);
-  let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsLocal(fmt(d));}
-  let mo=0; for(let d=1; d<=total; d++) mo+=dayPointsLocal(fmt(new Date(y,m,d,12)));
-  let used=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(entries[k]?.diapersUsed!=null) used+=Number(entries[k].diapersUsed)||0; }
-  document.getElementById('weeklyPts').textContent=w; document.getElementById('monthlyPts').textContent=mo;
+  let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsSafe(fmt(d));}
+  let mo=0; const todayKey3 = fmt(new Date()); for(let d=1; d<=total; d++){ const k = fmt(new Date(y,m,d,12)); if(k<=todayKey3) mo+=dayPointsSafe(k); }
+  // couches du mois : somme seulement jours passés+aujourd'hui et uniquement si une entrée existe
+  let used=0; const todayKey2 = fmt(new Date()); let elapsed=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(k<=todayKey2){ elapsed++; if(entries[k] && Number.isFinite(Number(entries[k].diapersUsed))) used += Number(entries[k].diapersUsed)||0; } }
+  const maxDiapers = Math.max(1, elapsed*4);
+
+  document.getElementById('weeklyPts').textContent=w; 
+  document.getElementById('monthlyPts').textContent=mo;
   document.getElementById('weeklyBar').style.width=Math.min(100,Math.round(100*w/100))+'%';
   document.getElementById('monthlyBar').style.width=Math.min(100,Math.round(100*mo/400))+'%';
   document.getElementById('monthDiapers').textContent=used;
   document.getElementById('diapersBar').style.width=Math.min(100, Math.round(100*used/maxDiapers)) + '%';
+
   document.getElementById('weeklyGoal').textContent = (w>=80?'Bébé à sa maman':w>=50?'Apprentie bébé':w>=30?'Jeune enfant':'');
   document.getElementById('monthlyGoal').textContent = (mo>=300?'Vrai bébé':mo>=200?'devient un bébé':mo>=100?'Quitte le monde des adultes':'');
 }
@@ -339,7 +374,7 @@ renderCalendar();
 document.getElementById('prevMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()-1);renderCalendar();};
 document.getElementById('nextMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()+1);renderCalendar();};
 
-// Actions list + add
+// --- Liste des actions + création ---
 const taskList=document.getElementById('taskList');
 function renderTaskList(){
   taskList.innerHTML='';
@@ -364,7 +399,7 @@ document.getElementById('addTaskForm').onsubmit=(e)=>{
   if(file){const r=new FileReader(); r.onload=e=>add(e.target.result); r.readAsDataURL(file);} else add('images/diaper_clean.webp');
 };
 
-// Points editor
+// --- Éditeur de points ---
 function renderPointsEditor(){
   const host=document.getElementById('pointsTaskList'); host.innerHTML='';
   tasks.forEach((t,i)=>{
@@ -385,7 +420,7 @@ document.getElementById('savePoints').onclick=()=>{
   document.getElementById('zeroPts').textContent=rules.zero;
 };
 
-// Rules (règles de bébé)
+// --- Règles de bébé ---
 function renderRulesList(){
   const host=document.getElementById('rulesList'); host.innerHTML='';
   if(!babyRules.length){ host.innerHTML='<div class="small">Aucune règle pour le moment.</div>'; return; }
@@ -406,7 +441,7 @@ document.getElementById('clearRules').onclick=()=>{ babyRules=[]; saveAll(); };
 document.getElementById('closeR').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
 document.getElementById('rb').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
 
-// Day modal
+// --- Modale Jour ---
 const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
   currentKey=k; ensureDay(k);
@@ -427,7 +462,7 @@ function openDay(k){
     p.classList.toggle('active', Number(entries[k].diapersUsed)===n);
     p.onclick=()=>{ 
       entries[k].diapersUsed=n;
-      if(n===0){ entries[k].diaperState=0; } // 0 couche => forcer propre et pénalité appliquée via rules.zero
+      if(n===0){ entries[k].diaperState=0; } // 0 couche => état propre + pénalité zero
       saveAll(); openDay(k); renderCalendar(); 
     };
   });
