@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper Tracker V7</title>
+<title>Diaper Tracker</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 :root{
@@ -82,10 +82,13 @@ h1{
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 .task-row{display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:10px;padding:8px}
 .task-row .left{display:flex;align-items:center;gap:8px}
+
+/* Objectifs : police enfantine plus grande */
+.objkid{font-family:'Comic Sans MS','Baloo 2','Quicksand',cursive;font-size:16.5px;line-height:1.5}
 </style>
 </head>
 <body>
-<h1>Diaper Tracker V7</h1>
+<h1>Diaper Tracker</h1>
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 <main class="container">
   <aside class="panel">
@@ -137,7 +140,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 
     <div id="tab-objectifs" class="tab-content">
       <h3>Badges à débloquer</h3>
-      <ul class="small">
+      <ul class="small objkid">
         <li><b>Semaine</b>: 30 → Jeune enfant · 50 → Apprentie bébé · 80 → Bébé à sa maman</li>
         <li><b>Mois</b>: 100 → Quitte le monde des adultes · 200 → devient un bébé · 300 → Vrai bébé</li>
       </ul>
@@ -232,8 +235,8 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </div>
 
 <script>
-// clés de stockage (V7)
-const KEYS={entries:'dt_v7_entries',tasks:'dt_v7_tasks',rules:'dt_v7_rules',images:'dt_v7_images',babyRules:'dt_v7_baby_rules'};
+// clés de stockage (V7 mod)
+const KEYS={entries:'dt_v7b_entries',tasks:'dt_v7b_tasks',rules:'dt_v7b_rules',images:'dt_v7b_images',babyRules:'dt_v7b_baby_rules'};
 
 // points par défaut
 let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5};
@@ -254,7 +257,8 @@ let images=JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
  state_clean:'images/diaper_clean.webp',
  state_wet:'images/diaper_wet.webp',
  state_messy:'images/diaper_messy.webp',
- slip:'images/slip.webp'
+ slip:'images/slip.webp',
+ body:'images/body.webp'
 };
 
 // données des jours
@@ -271,7 +275,7 @@ function saveAll(){
 function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1}; }
 function fmt(d){return d.toISOString().slice(0,10);}
 
-// Légende (mini)
+// Légende
 document.getElementById('imgClean').src=images.state_clean;
 document.getElementById('imgWet').src=images.state_wet;
 document.getElementById('imgMessy').src=images.state_messy;
@@ -288,7 +292,6 @@ document.querySelectorAll('.tabs .tab').forEach(t=>t.onclick=()=>{
 });
 
 // --- Calcul points ---
-// version mutante (utilisée lors de l'édition d'un jour dans la modale)
 function dayPoints(key){
   ensureDay(key);
   const d = entries[key];
@@ -300,7 +303,6 @@ function dayPoints(key){
   const isZero = Number(d.diapersUsed) === 0;
   const zeroPenalty = isZero ? (Number.isFinite(zero) ? zero : -5) : 0;
 
-  // si 0 couche -> aucun point de couche
   const diaperPts = isZero ? 0 : ((st >= 1 ? wetPts : 0) + (st === 2 ? salePts : 0));
 
   const checksPts = Object.entries(d.checks).reduce((sum, [id, v]) => {
@@ -312,8 +314,7 @@ function dayPoints(key){
 
   return diaperPts + checksPts + zeroPenalty;
 }
-
-// version non‑mutante (pour calendrier/compteurs sans créer d'entrées fantômes)
+// Non-mutant
 function dayPointsSafe(key){
   const d = entries[key];
   if(!d) return 0;
@@ -343,20 +344,19 @@ function renderCalendar(){
   for(let d=1; d<=total; d++){
     const key=fmt(new Date(y,m,d,12));
     const st=(entries[key]&&entries[key].diaperState)||0;
-    const isFuture=key>todayKey;
     let img=null;
-    if(entries[key] && Number(entries[key].diapersUsed)===0){ img=images.slip; }
-    else if(!isFuture){ img = st===2?images.state_messy: st===1?images.state_wet: images.state_clean; }
-    else { img=images.slip; } // jours futurs -> slip
+    if(!entries[key]){ img=images.body; }
+    else if(Number(entries[key].diapersUsed)===0){ img=images.slip; }
+    else { img = st===2?images.state_messy: st===1?images.state_wet: images.state_clean; }
     const cell=document.createElement('div'); cell.className='day';
     cell.innerHTML=`<div class="num">${d}</div><div class="thumb">${img?`<img src="${img}" alt="">`:''}</div><div class="pts">${dayPointsSafe(key)} pts</div>`;
     cell.onclick=()=>openDay(key); calGrid.appendChild(cell);
   }
-  // weekly / monthly (sans créer d'entrées)
+  // weekly / monthly
   const now=new Date(); const s=(d=>{const x=new Date(d);x.setHours(0,0,0,0);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x;})(now);
   let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsSafe(fmt(d));}
   let mo=0; const todayKey3 = fmt(new Date()); for(let d=1; d<=total; d++){ const k = fmt(new Date(y,m,d,12)); if(k<=todayKey3) mo+=dayPointsSafe(k); }
-  // couches du mois : somme seulement jours passés+aujourd'hui et uniquement si une entrée existe
+  // couches du mois (jours passés+aujourd'hui, seulement si entrée existe)
   let used=0; const todayKey2 = fmt(new Date()); let elapsed=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(k<=todayKey2){ elapsed++; if(entries[k] && Number.isFinite(Number(entries[k].diapersUsed))) used += Number(entries[k].diapersUsed)||0; } }
   const maxDiapers = Math.max(1, elapsed*4);
 
@@ -462,7 +462,7 @@ function openDay(k){
     p.classList.toggle('active', Number(entries[k].diapersUsed)===n);
     p.onclick=()=>{ 
       entries[k].diapersUsed=n;
-      if(n===0){ entries[k].diaperState=0; } // 0 couche => état propre + pénalité zero
+      if(n===0){ entries[k].diaperState=0; }
       saveAll(); openDay(k); renderCalendar(); 
     };
   });
