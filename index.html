@@ -238,11 +238,24 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
 
 function dayPoints(key){
   ensureDay(key);
-  const st=entries[key].diaperState;
-  const diaperPts=(st>=1?rules.wet:0)+(st===2?rules.sale:0);
-  const zero=(entries[key].diapersUsed===0)?rules.zero:0;
-  const checks=Object.entries(entries[key].checks).reduce((s,[id,v])=>v?s+(tasks.find(t=>t.id===id)?.points||0):s,0);
-  return diaperPts+checks+zero;
+  const d = entries[key];
+
+  const st   = Number(d.diaperState)   || 0;
+  const wet  = Number(rules.wet);   const wetPts  = Number.isFinite(wet)  ? wet  : 0;
+  const sale = Number(rules.sale);  const salePts = Number.isFinite(sale) ? sale : 0;
+  const zero = Number(rules.zero);
+  const zeroPenalty = (Number(d.diapersUsed) === 0) ? (Number.isFinite(zero) ? zero : -5) : 0;
+
+  const diaperPts = (st >= 1 ? wetPts : 0) + (st === 2 ? salePts : 0);
+
+  const checksPts = Object.entries(d.checks).reduce((sum, [id, v]) => {
+    if (!v) return sum;
+    const task = tasks.find(t => t.id === id);
+    const p = Number(task && task.points);
+    return sum + (Number.isFinite(p) ? p : 0);
+  }, 0);
+
+  return diaperPts + checksPts + zeroPenalty;
 }
 
 const calGrid=document.getElementById('calGrid'); const monthLabel=document.getElementById('monthLabel'); let viewing=new Date(); viewing.setDate(1);
