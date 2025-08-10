@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper tracker V5 — dense</title>
+<title>Diaper tracker V5 — dense v2</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 :root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f}
 body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fffaff,#f7fbff);color:var(--ink)}
-.container{max-width:1300px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
+.container{max-width:1320px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
 .panel,.calendar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
 .btn{border:none;border-radius:10px;padding:8px 12px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:#1a2442}
@@ -16,14 +16,14 @@ h1{margin:8px 0 0;text-align:center}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
-/* denser calendar */
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:6px}
-.day-head{color:var(--muted);text-align:center;font-weight:700}
-.day{min-height:150px;border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
-.day .num{font-weight:800;font-size:14px}
+/* denser calendar: smaller cells but keep 64x64 thumbs */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(100px,1fr));gap:4px}
+.day-head{color:var(--muted);text-align:center;font-weight:700;font-size:12px}
+.day{min-height:120px;border:1px solid var(--line);border-radius:10px;padding:4px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
+.day .num{font-weight:800;font-size:12px}
 .day .thumb{display:flex;align-items:center;justify-content:center}
-.day .thumb img{width:64px;height:64px;object-fit:contain}  /* smaller to fit more days */
-.day .pts{justify-self:end;font-weight:700;font-size:12px}
+.day .thumb img{width:64px;height:64px;object-fit:contain}  /* unchanged */
+.day .pts{justify-self:end;font-weight:700;font-size:11px}
 .legend-panel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
 .legend-panel .it{display:flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:999px;padding:4px 8px}
 .legend-panel img{width:36px;height:36px;object-fit:contain}
@@ -33,22 +33,28 @@ h1{margin:8px 0 0;text-align:center}
 .progress-row .bar>div{height:100%;width:0;background:linear-gradient(90deg,#bcd1ff,var(--brand));transition:width .3s}
 .stat-line{display:flex;justify-content:space-between;margin-top:4px}
 .small{color:var(--muted);font-size:12px}
-.pos{color:var(--green);font-weight:700} .neg{color:var(--red);font-weight:700}
+.pos{color:var(--green);font-weight:700} .neg{color:#d32f2f;font-weight:700}
 .modal{position:fixed;inset:0;display:none}
 .modal.show{display:block}
 .modal-backdrop{position:absolute;inset:0;background:rgba(29,35,58,.45)}
-.modal-body{position:relative;background:#fff;border-radius:16px;padding:14px;border:1px solid var(--line);width:min(900px,calc(100% - 24px));margin:40px auto}
-.section{margin-top:10px}
+.modal-body{position:relative;background:#fff;border-radius:16px;padding:12px;border:1px solid var(--line);width:min(900px,calc(100% - 24px));margin:40px auto}
+.section{margin-top:8px}
+/* Reduce space between top diaper and actions */
+.section.compact{margin-top:4px}
+/* checklist with 170% bigger icons relative to previous 48px => ~82px */
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .check-item{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
-.check-item img{width:48px;height:48px;object-fit:contain} /* still big but not overwhelming */
+.check-item img{width:82px;height:82px;object-fit:contain}
+/* Center the state image row */
+.state-row{display:flex;justify-content:center;align-items:center;gap:12px}
+#stateImg{display:block;margin:0 auto}
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .pill.active{background:#edf2ff;border-color:#c7d2fe}
 .badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px}
 .textarea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
-.rule{border:1px dashed var(--line);border-radius:10px;padding:8px}
+.rule{border:1px dashed var(--line);border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center}
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
-@media(max-width:1100px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(100px,1fr))}.day{min-height:140px}}
+@media(max-width:1100px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(90px,1fr))}.day{min-height:110px}}
 </style>
 </head>
 <body>
@@ -62,7 +68,8 @@ let tasks = JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
   {id:'eat_healthy',name:'Manger sainement',points:2,icon:'images/healthy.webp'},
   {id:'house_task',name:'Ménage',points:1,icon:'images/cleaning.webp'},
   {id:'public_diaper',name:'Couche en public',points:2,icon:'images/diaper_public.webp'},
-  {id:'big_visible_public',name:'Grosse couche visible en public',points:5,icon:'images/diaper_friend.webp'}
+  {id:'big_visible_public',name:'Grosse couche visible en public',points:5,icon:'images/diaper_friend.webp'},
+  {id:'diaper_family',name:'Porter des couches en famille',points:20,icon:'images/diaper_family.webp'}
 ];
 let images = JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
   state_clean: 'images/diaper_clean.webp',
@@ -122,7 +129,7 @@ document.body.innerHTML = `
         <input id="taskSticker" type="file" accept="image/*">
         <button class="btn">Ajouter</button>
       </div>
-      <small class="small">Sticker optionnel.</small>
+      <small class="small">Ce bandeau sert à créer de nouvelles actions. Elles apparaîtront ensuite dans le détail de chaque journée.</small>
     </form>
 
     <div class="legend-panel">
@@ -160,10 +167,10 @@ document.body.innerHTML = `
       <h3 id="mdDate">—</h3>
       <button class="btn ghost" id="closeM">Fermer</button>
     </div>
-    <div class="section">
+    <div class="section compact">
       <h4>État de la couche</h4>
-      <div class="flex">
-        <!-- 80% of previous big (288px) -> 230px -->
+      <div class="state-row">
+        <!-- Centered state image at ~80% of large -->
         <img id="stateImg" src="" width="230" height="230" style="object-fit:contain">
         <div class="grid small">
           <button class="btn ghost" data-set="0">Propre</button>
@@ -172,11 +179,11 @@ document.body.innerHTML = `
         </div>
       </div>
     </div>
-    <div class="section">
+    <div class="section compact">
       <h4>Actions du jour</h4>
       <div id="checklist" class="checklist"></div>
     </div>
-    <div class="section">
+    <div class="section compact">
       <h4>Couches utilisées (statistique)</h4>
       <div class="pills flex">
         <span class="pill" data-n="1">1</span>
@@ -186,7 +193,7 @@ document.body.innerHTML = `
       </div>
       <div class="small">N’influe pas les points.</div>
     </div>
-    <div class="section">
+    <div class="section compact">
       <div class="stat-line"><span>Points du jour</span><b id="dayPts">0</b></div>
     </div>
   </div>
@@ -240,13 +247,44 @@ document.getElementById('prevMonth').onclick=()=>{ viewing.setMonth(viewing.getM
 document.getElementById('nextMonth').onclick=()=>{ viewing.setMonth(viewing.getMonth()+1); renderCalendar(); };
 document.getElementById('saveRules').onclick=()=>{ rules.wet=parseInt(document.getElementById('wetPts').value,10)||0; rules.sale=parseInt(document.getElementById('salePts').value,10)||0; saveAll(); renderCalendar(); };
 
-// Baby rules
+/* ---------- Actions list in left panel (create/delete) ---------- */
+const taskList = document.getElementById('taskList');
+function renderTaskList(){
+  taskList.innerHTML='';
+  tasks.forEach((t,i)=>{
+    const row = document.createElement('div');
+    row.className='rule';
+    row.innerHTML = `<div class="flex"><img src="${t.icon}" style="width:28px;height:28px;object-fit:contain"><b>${t.name}</b><span class="${t.points>=0?'pos':'neg'} small">(${t.points} pts)</span></div><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    row.querySelector('[data-del]').onclick=()=>{ tasks.splice(i,1); saveAll(); renderTaskList(); };
+    taskList.appendChild(row);
+  });
+}
+renderTaskList();
+
+document.getElementById('addTaskForm').onsubmit=(e)=>{
+  e.preventDefault();
+  const name = document.getElementById('taskName').value.trim();
+  const pts = parseInt(document.getElementById('taskPoints').value,10);
+  const file = document.getElementById('taskSticker').files[0];
+  if(!name || isNaN(pts)) return;
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');
+  function add(iconUrl){ tasks.push({id,name,points:pts,icon:iconUrl||'images/diaper_clean.webp'}); saveAll(); renderTaskList(); document.getElementById('addTaskForm').reset(); }
+  if(file){
+    const reader = new FileReader();
+    reader.onload = (ev)=> add(ev.target.result); // store as data URL so it persists
+    reader.readAsDataURL(file);
+  }else{
+    add('images/diaper_clean.webp');
+  }
+};
+
+/* ---------- Baby rules ---------- */
 const rulesList = document.getElementById('rulesList');
 function renderRules(){
   rulesList.innerHTML='';
   if(!babyRules.length){ rulesList.innerHTML='<div class="small">Aucune règle pour l’instant.</div>'; return;}
   babyRules.forEach((r,i)=>{
-    const d=document.createElement('div'); d.className='rule flex'; d.innerHTML=`<span>${r}</span><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    const d=document.createElement('div'); d.className='rule'; d.innerHTML=`<span>${r}</span><button class="btn ghost" data-del="${i}">Supprimer</button>`;
     d.querySelector('[data-del]').onclick=()=>{ babyRules.splice(i,1); saveAll(); renderRules(); };
     rulesList.appendChild(d);
   });
@@ -261,7 +299,7 @@ document.getElementById('addRules').onclick=()=>{
 document.getElementById('clearRules').onclick=()=>{ babyRules=[]; saveAll(); renderRules(); };
 renderRules();
 
-// Day modal + checklist + diapers used
+/* ---------- Day modal + checklist ---------- */
 const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
   currentKey=k; ensureDay(k);
