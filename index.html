@@ -1,49 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper Tracker v3.1 — complet</title>
+<title>Diaper Tracker v3.1 — grandes images</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 :root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff}
 body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fffaff,#f7fbff);color:var(--ink)}
-.container{max-width:1200px;margin:8px auto;padding:12px;display:grid;grid-template-columns:340px 1fr;gap:16px}
+.container{max-width:1200px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
 .panel,.calendar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
 .btn{border:none;border-radius:10px;padding:8px 12px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:#1a2442}
 .grid{display:grid;gap:8px}
 .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 h1{margin:8px 0 0;text-align:center}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(110px,1fr));gap:8px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(140px,1fr));gap:8px}
 .day-head{color:var(--muted);text-align:center;font-weight:700}
-.day{min-height:110px;border:1px solid var(--line);border-radius:14px;padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:4px;cursor:pointer;background:#fff}
+.day{min-height:200px;border:1px solid var(--line);border-radius:14px;padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:4px;cursor:pointer;background:#fff}
 .day .num{font-weight:800}
-.day .thumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.day .thumb img{width:26px;height:26px;object-fit:contain}
+.day .thumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center}
+.day .thumb img{width:104px;height:104px;object-fit:contain}
 .day .pts{justify-self:end;font-weight:700}
 .legend{margin-top:8px;display:flex;gap:14px;color:var(--muted);align-items:center}
-.legend img{width:18px;height:18px;object-fit:contain}
+.legend img{width:72px;height:72px;object-fit:contain}
 .progress{display:grid;gap:8px}
 .progress-row{display:grid;grid-template-columns:100px 1fr max-content;gap:8px;align-items:center}
 .progress-row .bar{height:10px;background:#f5f6ff;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .progress-row .bar>div{height:100%;width:0;background:linear-gradient(90deg,#bcd1ff,var(--brand));transition:width .3s}
 .stat-line{display:flex;justify-content:space-between;margin-top:4px}
 .small{color:var(--muted);font-size:12px}
+.pos{color:#1a7f37;font-weight:700} .neg{color:#d32f2f;font-weight:700}
 .modal{position:fixed;inset:0;display:none}
 .modal.show{display:block}
 .modal-backdrop{position:absolute;inset:0;background:rgba(29,35,58,.45)}
-.modal-body{position:relative;background:#fff;border-radius:16px;padding:14px;border:1px solid var(--line);width:min(820px,calc(100% - 24px));margin:40px auto}
+.modal-body{position:relative;background:#fff;border-radius:16px;padding:14px;border:1px solid var(--line);width:min(920px,calc(100% - 24px));margin:40px auto}
 .section{margin-top:10px}
-.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.check-item{border:1px dashed var(--line);border-radius:12px;padding:8px;display:flex;align-items:center;gap:8px}
-.check-item img{width:22px;height:22px;object-fit:contain}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-item{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
+.check-item img{width:66px;height:66px;object-fit:contain}
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .pill.active{background:#edf2ff;border-color:#c7d2fe}
 .badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px}
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
-@media(max-width:960px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(86px,1fr))}}
+@media(max-width:1100px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(110px,1fr))}.day{min-height:180px}.day .thumb img{width:90px;height:90px}.legend img{width:60px;height:60px}}
 </style>
 </head>
 <body>
@@ -82,7 +83,7 @@ function dayPoints(key){
 }
 
 document.body.innerHTML = `
-<h1>Diaper Tracker v3.1</h1>
+<h1>Diaper Tracker v3.1 — grandes images</h1>
 <div class="subtitle">Calendrier ✦ Actions ✦ Points ✦ Stickers personnalisés</div>
 <main class="container">
   <aside class="panel">
@@ -133,7 +134,7 @@ document.body.innerHTML = `
     <div class="section">
       <h4>État de la couche</h4>
       <div class="flex">
-        <img id="stateImg" src="" width="72" height="72" style="object-fit:contain">
+        <img id="stateImg" src="" width="288" height="288" style="object-fit:contain">
         <div class="grid small">
           <button class="btn ghost" data-set="0">Propre</button>
           <button class="btn ghost" data-set="1">Pipi</button>
@@ -209,7 +210,6 @@ document.getElementById('prevMonth').onclick=()=>{ viewing.setMonth(viewing.getM
 document.getElementById('nextMonth').onclick=()=>{ viewing.setMonth(viewing.getMonth()+1); renderCalendar(); };
 document.getElementById('saveRules').onclick=()=>{ rules.wet=parseInt(document.getElementById('wetPts').value,10)||0; rules.sale=parseInt(document.getElementById('salePts').value,10)||0; saveAll(); renderCalendar(); };
 
-// Day modal + checklist + diapers used
 const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
   currentKey=k; ensureDay(k);
@@ -217,14 +217,21 @@ function openDay(k){
   stateImg.src = entries[k].diaperState===2?images.state_messy: entries[k].diaperState===1?images.state_wet: images.state_clean;
   checklist.innerHTML='';
   tasks.forEach(t=>{
-    const it=document.createElement('div'); it.className='check-item';
     const checked=!!entries[k].checks[t.id];
-    it.innerHTML=`<img src="${'images/diaper_clean.webp'}"><label style="display:flex;gap:6px;align-items:center;"><input type="checkbox" ${'${checked?\"checked\":\"\"}'}> ${'${t.name}'} <span class="small">(${ '${t.points}' } pts)</span></label>`;
-    it.querySelector('img').src = t.icon;
-    const cb=it.querySelector('input'); cb.onchange=()=>{ entries[k].checks[t.id]=cb.checked; saveAll(); updateDay(); };
-    checklist.appendChild(it);
+    const ptsClass = (t.points>=0) ? 'pos' : 'neg';
+    const item = document.createElement('div');
+    item.className = 'check-item';
+    item.innerHTML = `
+      <img src="${t.icon}" alt="">
+      <label style="display:flex;gap:10px;align-items:center;">
+        <input type="checkbox" ${checked?'checked':''}>
+        <span>${t.name}</span>
+        <span class="small ${ptsClass}">(${t.points} pts)</span>
+      </label>`;
+    const cb = item.querySelector('input');
+    cb.onchange = ()=>{ entries[k].checks[t.id]=cb.checked; saveAll(); updateDay(); };
+    checklist.appendChild(item);
   });
-  // pills
   document.querySelectorAll('.pills .pill').forEach(p=>{ const n=parseInt(p.dataset.n,10); p.classList.toggle('active', entries[k].diapersUsed===n); p.onclick=()=>{ entries[k].diapersUsed=n; saveAll(); document.querySelectorAll('.pills .pill').forEach(pp=>pp.classList.toggle('active', parseInt(pp.dataset.n,10)===n)); renderCalendar(); }; });
   dayPtsEl.textContent=dayPoints(k);
   modal.classList.add('show');
