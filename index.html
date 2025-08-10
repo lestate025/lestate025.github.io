@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper Tracker V6</title>
+<title>Diaper Tracker V7</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 :root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f}
@@ -66,15 +66,16 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </style>
 </head>
 <body>
-<h1>Diaper Tracker V6</h1>
+<h1>Diaper Tracker V7</h1>
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 <main class="container">
   <aside class="panel">
-    <div class="tabs">
-      <div class="tab active" data-tab="actions">Actions</div>
-      <div class="tab" data-tab="objectifs">Objectifs</div>
-      <div class="tab" data-tab="rules">Règles de bébé</div>
-      <div class="tab" data-tab="points">Modifier points</div>
+    
+    <div class="tabs" style="justify-content:space-between">
+      <img class="tab active" data-tab="actions" src="images/action.webp" alt="Actions" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
+      <img class="tab" data-tab="objectifs" src="images/objectif.webp" alt="Objectifs" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
+      <img class="tab" data-tab="rules" src="images/regles-bebe.webp" alt="Règles de bébé" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
+      <img class="tab" data-tab="points" src="images/points.webp" alt="Modifier points" style="width:72px;height:72px;padding:4px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer">
     </div>
     <div id="tab-actions" class="tab-content show">
       <h3>Compteurs</h3>
@@ -99,7 +100,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
       <div class="legend-panel">
         <div class="it"><img id="imgClean" alt=""><span>propre</span><span class="small">(0 pt)</span></div>
         <div class="it"><img id="imgWet" alt=""><span>pipi</span><span class="small">= <b id="wetPts">2</b> pts</span></div>
-        <div class="it"><img id="imgMessy" alt=""><span>pipi + sale</span><span class="small">+ <b id="salePts">5</b> pts</span></div>
+        <div class="it"><img id="imgMessy" alt=""><span>sale</span><span class="small">+ <b id="salePts">5</b> pts</span></div>
         <div class="it"><img id="imgSlip" alt=""><span>slip (0 couche)</span><span class="small"><b id="zeroPts">-5</b> pts</span></div>
       </div>
 
@@ -131,7 +132,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
       <h3>Modifier les points</h3>
       <div class="grid small">
         <div class="task-row"><div class="left"><img id="sw" style="width:24px;height:24px"><span>Pipi</span></div><input id="wetPtsInput" type="number" value="2" style="width:90px"></div>
-        <div class="task-row"><div class="left"><img id="sm" style="width:24px;height:24px"><span>Pipi + sale</span></div><input id="salePtsInput" type="number" value="5" style="width:90px"></div>
+        <div class="task-row"><div class="left"><img id="sm" style="width:24px;height:24px"><span>Sale</span></div><input id="salePtsInput" type="number" value="5" style="width:90px"></div>
         <div class="task-row"><div class="left"><img id="ss" style="width:24px;height:24px"><span>0 couche (slip)</span></div><input id="zeroPtsInput" type="number" value="-5" style="width:90px"></div>
         <hr>
         <div id="pointsTaskList" class="grid"></div>
@@ -166,7 +167,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
         <div class="state-controls">
           <button class="btn ghost" data-set="0">Propre</button>
           <button class="btn ghost" data-set="1">Pipi</button>
-          <button class="btn ghost" data-set="2">Pipi + sale</button>
+          <button class="btn ghost" data-set="2">Sale</button>
         </div>
       </div>
     </div>
