@@ -83,7 +83,11 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
         <div class="progress-row"><div>Semaine</div><div class="bar"><div id="weeklyBar"></div></div><div><b id="weeklyPts">0</b> pts<br><span id="weeklyGoal" class="goal"></span></div></div>
         <div class="progress-row"><div>Mois</div><div class="bar"><div id="monthlyBar"></div></div><div><b id="monthlyPts">0</b> pts<br><span id="monthlyGoal" class="goal"></span></div></div>
       </div>
-      <div class="stat-line"><span class="small">Couches utilisées (mois)</span><span class="badge" id="monthDiapers">0</span></div>
+      <div class="progress-row">
+        <div>Couches</div>
+        <div class="bar"><div id="diapersBar"></div></div>
+        <div><b id="monthDiapers">0</b> utilisées</div>
+      </div>
       <hr/>
 
       <h3>Créer une action</h3>
@@ -252,6 +256,8 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
 });
 
 function dayPoints(key){
+  // *** Mutating version used when a day is edited ***
+
   ensureDay(key);
   const d = entries[key];
 
@@ -272,6 +278,24 @@ function dayPoints(key){
     return sum + (Number.isFinite(p) ? p : 0);
   }, 0);
 
+  return diaperPts + checksPts + zeroPenalty;
+}
+
+
+// Non‑mutating calcul (ne crée pas d'entrée)
+function dayPointsSafe(key){
+  const d = entries[key];
+  if(!d) return 0;
+  const st   = Number(d.diaperState)||0;
+  const wet  = Number(rules.wet);   const wetPts  = Number.isFinite(wet)?wet:0;
+  const sale = Number(rules.sale);  const salePts = Number.isFinite(sale)?sale:0;
+  const isZero = Number(d.diapersUsed)===0;
+  const zeroPenalty = isZero ? (Number.isFinite(Number(rules.zero))?Number(rules.zero):-5) : 0;
+  const diaperPts = isZero ? 0 : ((st>=1?wetPts:0)+(st===2?salePts:0));
+  const checksPts = Object.entries(d.checks||{}).reduce((s,[id,v])=>{
+    if(!v) return s; const t = tasks.find(t=>t.id===id); const p = Number(t && t.points);
+    return s + (Number.isFinite(p)?p:0);
+  },0);
   return diaperPts + checksPts + zeroPenalty;
 }
 
@@ -307,6 +331,7 @@ function renderCalendar(){
   document.getElementById('weeklyBar').style.width=Math.min(100,Math.round(100*w/100))+'%';
   document.getElementById('monthlyBar').style.width=Math.min(100,Math.round(100*mo/400))+'%';
   document.getElementById('monthDiapers').textContent=used;
+  document.getElementById('diapersBar').style.width=Math.min(100, Math.round(100*used/maxDiapers)) + '%';
   document.getElementById('weeklyGoal').textContent = (w>=80?'Bébé à sa maman':w>=50?'Apprentie bébé':w>=30?'Jeune enfant':'');
   document.getElementById('monthlyGoal').textContent = (mo>=300?'Vrai bébé':mo>=200?'devient un bébé':mo>=100?'Quitte le monde des adultes':'');
 }
