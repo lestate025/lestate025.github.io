@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper tracker V5 - slip & objectifs</title>
+<title>Diaper Tracker V6</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 :root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f}
@@ -22,9 +22,10 @@ h1{margin:8px 0 0;text-align:center}
 .tab-content{display:none}.tab-content.show{display:block}
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(95px,1fr));gap:3px}
+/* densifier le calendrier sans réduire la taille des miniatures */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(80px,1fr));gap:3px}
 .day-head{color:var(--muted);text-align:center;font-weight:700;font-size:12px}
-.day{min-height:112px;border:1px solid var(--line);border-radius:10px;padding:4px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
+.day{min-height:100px;border:1px solid var(--line);border-radius:10px;padding:4px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
 .day .num{font-weight:800;font-size:12px}
 .day .thumb{display:flex;align-items:center;justify-content:center}
 .day .thumb img{width:64px;height:64px;object-fit:contain}
@@ -47,9 +48,11 @@ h1{margin:8px 0 0;text-align:center}
 .section{margin-top:8px}
 .section.compact{margin-top:4px}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.check-item{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
-.check-item img{width:82px;height:82px;object-fit:contain}
-.state-row{display:flex;justify-content:center;align-items:center;gap:16px}
+/* actions plus grandes en vue jour */
+.check-item{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:14px}
+.check-item img{width:110px;height:110px;object-fit:contain}
+/* contrôles d'état à droite mais centrés dans le bloc */
+.state-row{display:flex;justify-content:center;align-items:center;gap:20px}
 .state-controls{display:grid;gap:8px;align-content:center;justify-items:start}
 #stateImg{display:block;margin:0 auto}
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
@@ -63,7 +66,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </style>
 </head>
 <body>
-<h1>Diaper tracker V5</h1>
+<h1>Diaper Tracker V6</h1>
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 <main class="container">
   <aside class="panel">
@@ -148,6 +151,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
   </section>
 </main>
 
+<!-- MODALE JOUR -->
 <div class="modal" id="dayModal">
   <div class="modal-backdrop" id="mb"></div>
   <div class="modal-body">
@@ -187,6 +191,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
   </div>
 </div>
 
+<!-- MODALE REGLES -->
 <div class="modal" id="rulesModal">
   <div class="modal-backdrop" id="rb"></div>
   <div class="modal-body">
@@ -199,7 +204,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </div>
 
 <script>
-const KEYS={entries:'dt_v5_entries',tasks:'dt_v5_tasks',rules:'dt_v5_rules',images:'dt_v5_images',babyRules:'dt_v5_baby_rules'};
+const KEYS={entries:'dt_v6_entries',tasks:'dt_v6_tasks',rules:'dt_v6_rules',images:'dt_v6_images',babyRules:'dt_v6_baby_rules'};
 let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5};
 let tasks=JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
  {id:'no_alcohol',name:'No alcohol',points:1,icon:'images/no_alcohol.webp'},
@@ -216,11 +221,20 @@ let images=JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
  state_messy:'images/diaper_messy.webp',
  slip:'images/slip.webp'
 };
-let entries=JSON.parse(localStorage.getItem(KEYS.entries)||'{}'); let babyRules=JSON.parse(localStorage.getItem(KEYS.babyRules)||'[]');
-function saveAll(){localStorage.setItem(KEYS.tasks,JSON.stringify(tasks));localStorage.setItem(KEYS.images,JSON.stringify(images));localStorage.setItem(KEYS.entries,JSON.stringify(entries));localStorage.setItem(KEYS.rules,JSON.stringify(rules));localStorage.setItem(KEYS.babyRules,JSON.stringify(babyRules));}
-function ensureDay(k){if(!entries[k])entries[k]={diaperState:0,checks:{},diapersUsed:1};}
+let entries=JSON.parse(localStorage.getItem(KEYS.entries)||'{}'); 
+let babyRules=JSON.parse(localStorage.getItem(KEYS.babyRules)||'[]');
+
+function saveAll(){
+  localStorage.setItem(KEYS.tasks,JSON.stringify(tasks));
+  localStorage.setItem(KEYS.images,JSON.stringify(images));
+  localStorage.setItem(KEYS.entries,JSON.stringify(entries));
+  localStorage.setItem(KEYS.rules,JSON.stringify(rules));
+  localStorage.setItem(KEYS.babyRules,JSON.stringify(babyRules));
+}
+function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1}; }
 function fmt(d){return d.toISOString().slice(0,10);}
 
+// Legend images
 document.getElementById('imgClean').src=images.state_clean;
 document.getElementById('imgWet').src=images.state_wet;
 document.getElementById('imgMessy').src=images.state_messy;
@@ -244,9 +258,11 @@ function dayPoints(key){
   const wet  = Number(rules.wet);   const wetPts  = Number.isFinite(wet)  ? wet  : 0;
   const sale = Number(rules.sale);  const salePts = Number.isFinite(sale) ? sale : 0;
   const zero = Number(rules.zero);
-  const zeroPenalty = (Number(d.diapersUsed) === 0) ? (Number.isFinite(zero) ? zero : -5) : 0;
+  const isZero = Number(d.diapersUsed) === 0;
+  const zeroPenalty = isZero ? (Number.isFinite(zero) ? zero : -5) : 0;
 
-  const diaperPts = (st >= 1 ? wetPts : 0) + (st === 2 ? salePts : 0);
+  // si 0 couche -> aucun point de couche (pas de wet/sale)
+  const diaperPts = isZero ? 0 : ((st >= 1 ? wetPts : 0) + (st === 2 ? salePts : 0));
 
   const checksPts = Object.entries(d.checks).reduce((sum, [id, v]) => {
     if (!v) return sum;
@@ -258,6 +274,7 @@ function dayPoints(key){
   return diaperPts + checksPts + zeroPenalty;
 }
 
+// Calendar
 const calGrid=document.getElementById('calGrid'); const monthLabel=document.getElementById('monthLabel'); let viewing=new Date(); viewing.setDate(1);
 function firstWeekday(y,m){return (new Date(y,m,1).getDay()+6)%7;}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
@@ -270,7 +287,11 @@ function renderCalendar(){
   for(let d=1; d<=total; d++){
     const key=fmt(new Date(y,m,d,12)); if(!entries[key]) entries[key]={diaperState:0,checks:{},diapersUsed:1};
     const st=entries[key].diaperState; const isFuture=key>todayKey;
-    let img=null; if(entries[key].diapersUsed===0){img=images.slip;} else if(!isFuture){img=st===2?images.state_messy: st===1?images.state_wet: images.state_clean;} else {img=images.slip;}
+    let img=null; 
+    if(Number(entries[key].diapersUsed)===0){ img=images.slip; }
+    else if(!isFuture){ img = st===2?images.state_messy: st===1?images.state_wet: images.state_clean; }
+    else { img=images.slip; } // jours futurs -> slip
+
     const cell=document.createElement('div'); cell.className='day';
     cell.innerHTML=`<div class="num">${d}</div><div class="thumb">${img?`<img src="${img}" alt="">`:''}</div><div class="pts">${dayPoints(key)} pts</div>`;
     cell.onclick=()=>openDay(key); calGrid.appendChild(cell);
@@ -280,7 +301,7 @@ function renderCalendar(){
   const now=new Date(); const s=(d=>{const x=new Date(d);x.setHours(0,0,0,0);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x;})(now);
   let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsLocal(fmt(d));}
   let mo=0; for(let d=1; d<=total; d++) mo+=dayPointsLocal(fmt(new Date(y,m,d,12)));
-  let used=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(entries[k]?.diapersUsed!=null) used+=entries[k].diapersUsed; }
+  let used=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(entries[k]?.diapersUsed!=null) used+=Number(entries[k].diapersUsed)||0; }
   document.getElementById('weeklyPts').textContent=w; document.getElementById('monthlyPts').textContent=mo;
   document.getElementById('weeklyBar').style.width=Math.min(100,Math.round(100*w/100))+'%';
   document.getElementById('monthlyBar').style.width=Math.min(100,Math.round(100*mo/400))+'%';
@@ -292,14 +313,14 @@ renderCalendar();
 document.getElementById('prevMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()-1);renderCalendar();};
 document.getElementById('nextMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()+1);renderCalendar();};
 
-// Actions list
+// Actions list + add
 const taskList=document.getElementById('taskList');
 function renderTaskList(){
   taskList.innerHTML='';
   tasks.forEach((t,i)=>{
     const row=document.createElement('div'); row.className='task-row';
     row.innerHTML=`<div class="left"><img src="${t.icon}" style="width:28px;height:28px;object-fit:contain"><span>${t.name}</span><span class="${t.points>=0?'pos':'neg'} small">(${t.points} pts)</span></div><button class="btn ghost" data-del="${i}">Supprimer</button>`;
-    row.querySelector('[data-del]').onclick=()=>{tasks.splice(i,1);saveAll();renderTaskList();};
+    row.querySelector('[data-del]').onclick=()=>{tasks.splice(i,1);saveAll();renderTaskList();renderPointsEditor();};
     taskList.appendChild(row);
   });
 }
@@ -307,37 +328,66 @@ renderTaskList();
 document.getElementById('addTaskForm').onsubmit=(e)=>{
   e.preventDefault();
   const name=document.getElementById('taskName').value.trim();
-  const pts=parseInt(document.getElementById('taskPoints').value,10);
+  const pts=Number(document.getElementById('taskPoints').value);
   const file=document.getElementById('taskSticker').files[0];
-  if(!name||isNaN(pts))return;
-  function add(icon){tasks.push({id:name.toLowerCase().replace(/[^a-z0-9]+/g,'_'),name,points:pts,icon:icon||'images/diaper_clean.webp'});saveAll();renderTaskList();document.getElementById('addTaskForm').reset();}
+  if(!name || !Number.isFinite(pts)) return;
+  function add(icon){
+    tasks.push({id:name.toLowerCase().replace(/[^a-z0-9]+/g,'_'),name,points:pts,icon:icon||'images/diaper_clean.webp'});
+    saveAll(); renderTaskList(); renderPointsEditor(); document.getElementById('addTaskForm').reset();
+  }
   if(file){const r=new FileReader(); r.onload=e=>add(e.target.result); r.readAsDataURL(file);} else add('images/diaper_clean.webp');
 };
 
 // Points editor
 function renderPointsEditor(){
   const host=document.getElementById('pointsTaskList'); host.innerHTML='';
-  tasks.forEach((t,i)=>{const row=document.createElement('div'); row.className='task-row'; row.innerHTML=`<div class="left"><img src="${t.icon}" style="width:24px;height:24px"><span>${t.name}</span></div><input type="number" value="${t.points}" data-pts="${i}" style="width:90px">`; row.querySelector('input').onchange=(e)=>{tasks[i].points=parseInt(e.target.value,10)||0;}; host.appendChild(row);});
+  tasks.forEach((t,i)=>{
+    const row=document.createElement('div'); row.className='task-row';
+    row.innerHTML=`<div class="left"><img src="${t.icon}" style="width:24px;height:24px"><span>${t.name}</span></div><input type="number" value="${t.points}" data-pts="${i}" style="width:90px">`;
+    row.querySelector('input').onchange=(e)=>{tasks[i].points=Number(e.target.value)||0;};
+    host.appendChild(row);
+  });
 }
 renderPointsEditor();
 document.getElementById('savePoints').onclick=()=>{
-  rules.wet=parseInt(document.getElementById('wetPtsInput').value,10)||0;
-  rules.sale=parseInt(document.getElementById('salePtsInput').value,10)||0;
-  rules.zero=parseInt(document.getElementById('zeroPtsInput').value,10)||-5;
-  saveAll(); renderTaskList(); renderCalendar();
+  rules.wet=Number(document.getElementById('wetPtsInput').value)||0;
+  rules.sale=Number(document.getElementById('salePtsInput').value)||0;
+  rules.zero=Number(document.getElementById('zeroPtsInput').value); if(!Number.isFinite(rules.zero)) rules.zero=-5;
+  saveAll(); renderTaskList(); renderCalendar(); renderPointsEditor();
   document.getElementById('wetPts').textContent=rules.wet;
   document.getElementById('salePts').textContent=rules.sale;
   document.getElementById('zeroPts').textContent=rules.zero;
 };
+
+// Rules (règles de bébé)
+function renderRulesList(){
+  const host=document.getElementById('rulesList'); host.innerHTML='';
+  if(!babyRules.length){ host.innerHTML='<div class="small">Aucune règle pour le moment.</div>'; return; }
+  babyRules.forEach((r,i)=>{
+    const row=document.createElement('div'); row.className='rule';
+    row.innerHTML=`<span>${r}</span><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    row.querySelector('[data-del]').onclick=()=>{babyRules.splice(i,1); saveAll(); renderRulesList();};
+    host.appendChild(row);
+  });
+}
+document.getElementById('addRules').onclick=()=>{
+  const raw=document.getElementById('ruleInput').value; if(!raw.trim()) return;
+  raw.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(s=>babyRules.push(s));
+  document.getElementById('ruleInput').value=''; saveAll();
+};
+document.getElementById('showRules').onclick=()=>{ renderRulesList(); document.getElementById('rulesModal').classList.add('show'); };
+document.getElementById('clearRules').onclick=()=>{ babyRules=[]; saveAll(); };
+document.getElementById('closeR').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
+document.getElementById('rb').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
 
 // Day modal
 const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
   currentKey=k; ensureDay(k);
   mdDate.textContent=new Date(k).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-  const st=entries[k].diaperState; const base=230; const extra=(st===2)?1.15:1.0;
+  const st=Number(entries[k].diaperState)||0; const base=230; const extra=(st===2)?1.15:1.0;
   stateImg.width=Math.round(base*extra); stateImg.height=Math.round(base*extra);
-  stateImg.src=(entries[k].diapersUsed===0)?images.slip:(st===2?images.state_messy:st===1?images.state_wet:images.state_clean);
+  stateImg.src=(Number(entries[k].diapersUsed)===0)?images.slip:(st===2?images.state_messy:st===1?images.state_wet:images.state_clean);
   checklist.innerHTML='';
   tasks.forEach(t=>{
     const checked=!!entries[k].checks[t.id];
@@ -347,16 +397,20 @@ function openDay(k){
     checklist.appendChild(item);
   });
   document.querySelectorAll('.pills .pill').forEach(p=>{
-    const n=parseInt(p.dataset.n,10);
-    p.classList.toggle('active', entries[k].diapersUsed===n);
-    p.onclick=()=>{ entries[k].diapersUsed=n; saveAll(); openDay(k); renderCalendar(); };
+    const n=Number(p.dataset.n);
+    p.classList.toggle('active', Number(entries[k].diapersUsed)===n);
+    p.onclick=()=>{ 
+      entries[k].diapersUsed=n;
+      if(n===0){ entries[k].diaperState=0; } // 0 couche => forcer propre et pénalité appliquée via rules.zero
+      saveAll(); openDay(k); renderCalendar(); 
+    };
   });
   dayPtsEl.textContent=dayPoints(k);
   modal.classList.add('show');
 }
 function updateDay(){ if(!currentKey) return; dayPtsEl.textContent=dayPoints(currentKey); renderCalendar(); }
 document.getElementById('closeM').onclick=()=>modal.classList.remove('show'); document.getElementById('mb').onclick=()=>modal.classList.remove('show');
-document.querySelectorAll('[data-set]').forEach(b=>{ b.onclick=()=>{ entries[currentKey].diaperState=parseInt(b.dataset.set,10); saveAll(); openDay(currentKey); renderCalendar(); }; });
+document.querySelectorAll('[data-set]').forEach(b=>{ b.onclick=()=>{ entries[currentKey].diaperState=Number(b.dataset.set)||0; saveAll(); openDay(currentKey); renderCalendar(); }; });
 </script>
 </body>
 </html>
