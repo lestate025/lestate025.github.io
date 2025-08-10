@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diaper Tracker v3.1 — grandes images</title>
+<title>Diaper tracker V5 — dense</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
-:root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff}
+:root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f}
 body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fffaff,#f7fbff);color:var(--ink)}
-.container{max-width:1200px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
+.container{max-width:1300px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
 .panel,.calendar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
 .btn{border:none;border-radius:10px;padding:8px 12px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:#1a2442}
@@ -16,40 +16,45 @@ h1{margin:8px 0 0;text-align:center}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(140px,1fr));gap:8px}
+/* denser calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:6px}
 .day-head{color:var(--muted);text-align:center;font-weight:700}
-.day{min-height:200px;border:1px solid var(--line);border-radius:14px;padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:4px;cursor:pointer;background:#fff}
-.day .num{font-weight:800}
-.day .thumb{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center}
-.day .thumb img{width:104px;height:104px;object-fit:contain}
-.day .pts{justify-self:end;font-weight:700}
-.legend{margin-top:8px;display:flex;gap:14px;color:var(--muted);align-items:center}
-.legend img{width:72px;height:72px;object-fit:contain}
-.progress{display:grid;gap:8px}
-.progress-row{display:grid;grid-template-columns:100px 1fr max-content;gap:8px;align-items:center}
+.day{min-height:150px;border:1px solid var(--line);border-radius:12px;padding:6px;display:grid;grid-template-rows:auto 1fr auto;gap:2px;cursor:pointer;background:#fff}
+.day .num{font-weight:800;font-size:14px}
+.day .thumb{display:flex;align-items:center;justify-content:center}
+.day .thumb img{width:64px;height:64px;object-fit:contain}  /* smaller to fit more days */
+.day .pts{justify-self:end;font-weight:700;font-size:12px}
+.legend-panel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.legend-panel .it{display:flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:999px;padding:4px 8px}
+.legend-panel img{width:36px;height:36px;object-fit:contain}
+.progress{display:grid;gap:8px;margin-bottom:8px}
+.progress-row{display:grid;grid-template-columns:84px 1fr max-content;gap:8px;align-items:center}
 .progress-row .bar{height:10px;background:#f5f6ff;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .progress-row .bar>div{height:100%;width:0;background:linear-gradient(90deg,#bcd1ff,var(--brand));transition:width .3s}
 .stat-line{display:flex;justify-content:space-between;margin-top:4px}
 .small{color:var(--muted);font-size:12px}
-.pos{color:#1a7f37;font-weight:700} .neg{color:#d32f2f;font-weight:700}
+.pos{color:var(--green);font-weight:700} .neg{color:var(--red);font-weight:700}
 .modal{position:fixed;inset:0;display:none}
 .modal.show{display:block}
 .modal-backdrop{position:absolute;inset:0;background:rgba(29,35,58,.45)}
-.modal-body{position:relative;background:#fff;border-radius:16px;padding:14px;border:1px solid var(--line);width:min(920px,calc(100% - 24px));margin:40px auto}
+.modal-body{position:relative;background:#fff;border-radius:16px;padding:14px;border:1px solid var(--line);width:min(900px,calc(100% - 24px));margin:40px auto}
 .section{margin-top:10px}
 .checklist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .check-item{border:1px dashed var(--line);border-radius:12px;padding:10px;display:flex;align-items:center;gap:10px}
-.check-item img{width:66px;height:66px;object-fit:contain}
+.check-item img{width:48px;height:48px;object-fit:contain} /* still big but not overwhelming */
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .pill.active{background:#edf2ff;border-color:#c7d2fe}
 .badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px}
+.textarea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.rule{border:1px dashed var(--line);border-radius:10px;padding:8px}
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
-@media(max-width:1100px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(110px,1fr))}.day{min-height:180px}.day .thumb img{width:90px;height:90px}.legend img{width:60px;height:60px}}
+@media(max-width:1100px){.container{grid-template-columns:1fr}.cal-grid{grid-template-columns:repeat(7,minmax(100px,1fr))}.day{min-height:140px}}
 </style>
 </head>
 <body>
 <script>
-const KEYS = { entries:'dt_v31_entries', tasks:'dt_v31_tasks', rules:'dt_v31_rules', images:'dt_v31_images' };
+const KEYS = { entries:'dt_v5_entries', tasks:'dt_v5_tasks', rules:'dt_v5_rules', images:'dt_v5_images', babyRules:'dt_v5_baby_rules' };
+
 let rules = JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2, sale:5};
 let tasks = JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
   {id:'no_alcohol',name:'No alcohol',points:1,icon:'images/no_alcohol.webp'},
@@ -65,8 +70,15 @@ let images = JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
   state_messy: 'images/diaper_messy.webp'
 };
 let entries = JSON.parse(localStorage.getItem(KEYS.entries)||'{}');
+let babyRules = JSON.parse(localStorage.getItem(KEYS.babyRules)||'[]');
 
-function saveAll(){ localStorage.setItem(KEYS.tasks, JSON.stringify(tasks)); localStorage.setItem(KEYS.images, JSON.stringify(images)); localStorage.setItem(KEYS.entries, JSON.stringify(entries)); localStorage.setItem(KEYS.rules, JSON.stringify(rules)); }
+function saveAll(){
+  localStorage.setItem(KEYS.tasks, JSON.stringify(tasks));
+  localStorage.setItem(KEYS.images, JSON.stringify(images));
+  localStorage.setItem(KEYS.entries, JSON.stringify(entries));
+  localStorage.setItem(KEYS.rules, JSON.stringify(rules));
+  localStorage.setItem(KEYS.babyRules, JSON.stringify(babyRules));
+}
 function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0, checks:{}, diapersUsed:1}; }
 
 function fmt(d){ return d.toISOString().slice(0,10); }
@@ -83,8 +95,8 @@ function dayPoints(key){
 }
 
 document.body.innerHTML = `
-<h1>Diaper Tracker v3.1 — grandes images</h1>
-<div class="subtitle">Calendrier ✦ Actions ✦ Points ✦ Stickers personnalisés</div>
+<h1>Diaper tracker V5</h1>
+<div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 <main class="container">
   <aside class="panel">
     <h3>Compteurs</h3>
@@ -112,7 +124,25 @@ document.body.innerHTML = `
       </div>
       <small class="small">Sticker optionnel.</small>
     </form>
+
+    <div class="legend-panel">
+      <div class="it"><img src="${images.state_clean}" alt=""><span>propre</span></div>
+      <div class="it"><img src="${images.state_wet}" alt=""><span>pipi</span></div>
+      <div class="it"><img src="${images.state_messy}" alt=""><span>pipi + sale</span></div>
+    </div>
+
+    <hr/>
+    <h3>Règle de bébé</h3>
+    <div class="grid">
+      <textarea id="ruleInput" class="textarea" placeholder="Écris ici tes règles de bébé (une par ligne)"></textarea>
+      <div class="flex">
+        <button class="btn" id="addRules">Ajouter</button>
+        <button class="btn ghost" id="clearRules">Tout effacer</button>
+      </div>
+      <div id="rulesList" class="grid"></div>
+    </div>
   </aside>
+
   <section class="calendar-card">
     <div class="cal-head">
       <button class="btn ghost" id="prevMonth">←</button>
@@ -120,7 +150,6 @@ document.body.innerHTML = `
       <button class="btn ghost" id="nextMonth">→</button>
     </div>
     <div class="cal-grid" id="calGrid"></div>
-    <div class="legend small"><img src="${images.state_clean}"> propre • <img src="${images.state_wet}"> pipi • <img src="${images.state_messy}"> pipi+sale</div>
   </section>
 </main>
 
@@ -134,7 +163,8 @@ document.body.innerHTML = `
     <div class="section">
       <h4>État de la couche</h4>
       <div class="flex">
-        <img id="stateImg" src="" width="288" height="288" style="object-fit:contain">
+        <!-- 80% of previous big (288px) -> 230px -->
+        <img id="stateImg" src="" width="230" height="230" style="object-fit:contain">
         <div class="grid small">
           <button class="btn ghost" data-set="0">Propre</button>
           <button class="btn ghost" data-set="1">Pipi</button>
@@ -210,6 +240,28 @@ document.getElementById('prevMonth').onclick=()=>{ viewing.setMonth(viewing.getM
 document.getElementById('nextMonth').onclick=()=>{ viewing.setMonth(viewing.getMonth()+1); renderCalendar(); };
 document.getElementById('saveRules').onclick=()=>{ rules.wet=parseInt(document.getElementById('wetPts').value,10)||0; rules.sale=parseInt(document.getElementById('salePts').value,10)||0; saveAll(); renderCalendar(); };
 
+// Baby rules
+const rulesList = document.getElementById('rulesList');
+function renderRules(){
+  rulesList.innerHTML='';
+  if(!babyRules.length){ rulesList.innerHTML='<div class="small">Aucune règle pour l’instant.</div>'; return;}
+  babyRules.forEach((r,i)=>{
+    const d=document.createElement('div'); d.className='rule flex'; d.innerHTML=`<span>${r}</span><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    d.querySelector('[data-del]').onclick=()=>{ babyRules.splice(i,1); saveAll(); renderRules(); };
+    rulesList.appendChild(d);
+  });
+}
+document.getElementById('addRules').onclick=()=>{
+  const txt=document.getElementById('ruleInput').value.trim();
+  if(!txt) return;
+  txt.split(/\n+/).map(s=>s.trim()).filter(Boolean).forEach(line=>babyRules.push(line));
+  document.getElementById('ruleInput').value='';
+  saveAll(); renderRules();
+};
+document.getElementById('clearRules').onclick=()=>{ babyRules=[]; saveAll(); renderRules(); };
+renderRules();
+
+// Day modal + checklist + diapers used
 const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
   currentKey=k; ensureDay(k);
