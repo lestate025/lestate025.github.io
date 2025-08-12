@@ -6,20 +6,34 @@
 <title>Diaper Tracker</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0}
-:root{--ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;--green:#1a7f37;--red:#d32f2f;--pink:#ff9fc7}
+:root{
+  --ink:#27314a;--muted:#6e7a96;--card:#fff;--brand:#6a8dff;--line:#e9e6ff;
+  --green:#1a7f37;--red:#d32f2f;--pink:#ff9fc7;--soft:#fff7fb
+}
 body{font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#fffaff,#f7fbff);color:var(--ink)}
 .container{max-width:1320px;margin:8px auto;padding:12px;display:grid;grid-template-columns:360px 1fr;gap:16px}
 .panel,.calendar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
-.btn{border:none;border-radius:10px;padding:8px 12px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
+.btn{border:none;border-radius:12px;padding:10px 14px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.05)}
 .btn.ghost{background:transparent;border:1px solid var(--line);color:#1a2442}
 .grid{display:grid;gap:8px}
 .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-h1{margin:10px 0 0;text-align:center;font-family:'Comic Sans MS','Baloo 2','Quicksand',cursive;font-weight:800;letter-spacing:.5px;color:#ff86bd;text-shadow:0 1px 0 #ffe3ef, 0 3px 8px rgba(255,134,189,.25);font-size:28px}
+h1{
+  margin:10px 0 0;text-align:center;
+  font-family:'Comic Sans MS','Baloo 2','Quicksand',cursive;
+  font-weight:800;letter-spacing:.5px;color:#ff86bd;
+  text-shadow:0 1px 0 #ffe3ef, 0 3px 8px rgba(255,134,189,.25);
+  font-size:28px;
+}
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
+/* sync badge */
+#syncBadge{position:fixed;right:12px;top:8px;z-index:50}
+.badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line)}
+/* Onglets images */
 .tabs{display:flex;gap:10px;margin:6px 0;justify-content:space-between}
 .tabs img.tab{width:72px;height:72px;padding:4px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:.2s}
 .tabs img.tab.active{border-color:#ffc7de;box-shadow:0 0 0 4px #fff, 0 0 0 6px #ffe6f2}
 .tab-content{display:none}.tab-content.show{display:block}
+/* Calendrier */
 .cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .month-label{font-weight:800}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(80px,1fr));gap:3px}
@@ -29,6 +43,7 @@ h1{margin:10px 0 0;text-align:center;font-family:'Comic Sans MS','Baloo 2','Quic
 .day .thumb{display:flex;align-items:center;justify-content:center}
 .day .thumb img{width:64px;height:64px;object-fit:contain}
 .day .pts{justify-self:end;font-weight:700;font-size:11px}
+/* Légende & compteurs */
 .legend-panel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
 .legend-panel .it{display:flex;align-items:center;gap:6px;border:1px dashed var(--line);border-radius:999px;padding:4px 8px}
 .legend-panel img{width:28px;height:28px;object-fit:contain}
@@ -40,8 +55,8 @@ h1{margin:10px 0 0;text-align:center;font-family:'Comic Sans MS','Baloo 2','Quic
 .small{color:#6e7a96;font-size:12px}
 .pos{color:#1a7f37;font-weight:700}.neg{color:#d32f2f;font-weight:700}
 .goal{font-size:12px;font-weight:700}
-.modal{position:fixed;inset:0;display:none}
-.modal.show{display:block}
+/* Modales & vue jour */
+.modal{position:fixed;inset:0;display:none}.modal.show{display:block}
 .modal-backdrop{position:absolute;inset:0;background:rgba(29,35,58,.45)}
 .modal-body{position:relative;background:#fff;border-radius:16px;padding:12px;border:1px solid var(--line);width:min(960px,calc(100% - 24px));margin:40px auto;max-height:90vh;overflow:auto}
 .section{margin-top:8px}.section.compact{margin-top:4px}
@@ -53,22 +68,36 @@ h1{margin:10px 0 0;text-align:center;font-family:'Comic Sans MS','Baloo 2','Quic
 #stateImg{display:block;margin:0 auto}
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .pill.active{background:#edf2ff;border-color:#c7d2fe}
-.badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px}
-.textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+.textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;padding:12px;resize:vertical;background:#fff;box-shadow:inset 0 1px 0 #f7f2ff}
 .rule{border:1px dashed var(--line);border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center}
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 .task-row{display:flex;justify-content:space-between;align-items:center;border:1px dashed var(--line);border-radius:10px;padding:8px}
 .task-row .left{display:flex;align-items:center;gap:8px}
+/* Formulaire "Créer une action" amélioré */
+.form-card{background:var(--soft);border:1px dashed #ffd6ea;border-radius:16px;padding:12px}
+.input{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;outline:none}
+.input:focus{box-shadow:0 0 0 3px #ffe6f2;border-color:#ffc7de}
+.file-wrap{position:relative;display:inline-flex;align-items:center;gap:8px}
+.file-wrap input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-weight:700}
+/* Objectifs : police enfantine plus grande */
 .objkid{font-family:'Comic Sans MS','Baloo 2','Quicksand',cursive;font-size:16.5px;line-height:1.5}
-#syncBadge{position:fixed;top:8px;right:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap}
+.badge-pill{background:#ffe6f2;border:1px solid #ffc7de;border-radius:999px;padding:4px 8px;font-size:12px}
+.card{border:1px solid var(--line);border-radius:12px;padding:10px}
+.item-row{display:flex;align-items:center;justify-content:space-between;border:1px dashed var(--line);border-radius:10px;padding:8px;margin-top:6px}
+.item-row .left{display:flex;align-items:center;gap:8px}
+.item-row input, .item-row select{border:1px solid var(--line);border-radius:8px;padding:6px 8px}
 </style>
 </head>
 <body>
-<div id="syncBadge">Hors ligne…</div>
 <h1>Diaper Tracker</h1>
+<div id="syncBadge" class="badge">Hors ligne…</div>
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
+
 <main class="container">
   <aside class="panel">
+    <!-- Onglets -->
     <div class="tabs">
       <img class="tab active" data-tab="actions" src="images/action.webp" alt="Actions">
       <img class="tab" data-tab="objectifs" src="images/objectif.webp" alt="Objectifs">
@@ -79,23 +108,32 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
     <div id="tab-actions" class="tab-content show">
       <h3>Compteurs</h3>
       <div class="progress">
-        <div class="progress-row"><div>Semaine</div><div class="bar"><div id="weeklyBar"></div></div><div><b id="weeklyPts">0</b> pts<br><span id="weeklyGoal" class="goal"></span></div></div>
-        <div class="progress-row"><div>Mois</div><div class="bar"><div id="monthlyBar"></div></div><div><b id="monthlyPts">0</b> pts<br><span id="monthlyGoal" class="goal"></span></div></div>
-        <div class="progress-row"><div>Couches</div><div class="bar"><div id="diapersBar"></div></div><div><b id="monthDiapers">0</b> utilisées</div></div>
+        <div class="progress-row">
+          <div>Semaine</div><div class="bar"><div id="weeklyBar"></div></div><div><b id="weeklyPts">0</b> pts<br><span id="weeklyGoal" class="goal"></span></div>
+        </div>
+        <div class="progress-row">
+          <div>Mois</div><div class="bar"><div id="monthlyBar"></div></div><div><b id="monthlyPts">0</b> pts<br><span id="monthlyGoal" class="goal"></span></div>
+        </div>
+        <div class="progress-row">
+          <div>Couches</div><div class="bar"><div id="diapersBar"></div></div><div><b id="monthDiapers">0</b> utilisées</div>
+        </div>
       </div>
       <hr/>
 
       <h3>Créer une action</h3>
-      <form id="addTaskForm" class="grid" style="margin-top:6px">
-        <input id="taskName" placeholder="Nom de l'action" required>
-        <input id="taskPoints" type="number" placeholder="Points (+/-)" required>
-        <div class="flex">
-          <label class="btn ghost" for="taskSticker">Choisir une image</label>
-          <input id="taskSticker" type="file" accept="image/*" style="display:none">
+      <form id="addTaskForm" class="grid form-card" style="margin-top:6px">
+        <input id="taskName" class="input" placeholder="Nom de l'action (ex: Lecture)" required>
+        <input id="taskPoints" class="input" type="number" placeholder="Points (+/-)" required>
+        <div class="flex" style="justify-content:space-between">
+          <label class="file-wrap">
+            <span class="file-btn">📎 Choisir une image</span>
+            <input id="taskSticker" type="file" accept="image/*">
+          </label>
           <button class="btn">Ajouter</button>
         </div>
       </form>
 
+      <!-- Légende état -->
       <div class="legend-panel">
         <div class="it"><img id="imgClean" alt=""><span>propre</span><span class="small">(0 pt)</span></div>
         <div class="it"><img id="imgWet" alt=""><span>pipi</span><span class="small">= <b id="wetPts">2</b> pts</span></div>
@@ -109,30 +147,47 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 
     <div id="tab-objectifs" class="tab-content">
       <h3>Badges à débloquer</h3>
-      <ul class="small objkid" id="goalsList">
-        <li><b>Semaine</b>: 30 → Jeune enfant · 50 → Apprentie bébé · 80 → Bébé à sa maman</li>
-        <li><b>Mois</b>: 100 → Quitte le monde des adultes · 200 → devient un bébé · 300 → Vrai bébé</li>
-      </ul>
-      <h4 style="margin-top:10px">Récompenses</h4>
-      <div id="rewards" class="grid small"></div>
-      <div class="flex">
-        <input id="rewardText" placeholder="Ajouter une récompense">
-        <button class="btn" id="addReward">Ajouter</button>
-      </div>
-      <h4>Punitions</h4>
-      <div id="punishments" class="grid small"></div>
-      <div class="flex">
-        <input id="punishText" placeholder="Ajouter une punition">
-        <button class="btn" id="addPunish">Ajouter</button>
+      <ul class="small objkid" id="goalsList"></ul>
+
+      <div class="grid" style="margin-top:10px">
+        <div class="card">
+          <h4>🎁 Récompenses</h4>
+          <div class="badge-row small"><span class="badge-pill">Semaine</span><span class="badge-pill">Mois</span></div>
+          <form id="addReward" class="flex" style="margin-top:8px">
+            <input id="rewardLabel" class="input" placeholder="Ex: Sortie au parc" required style="flex:1">
+            <select id="rewardScope">
+              <option value="weekly">Semaine</option>
+              <option value="monthly">Mois</option>
+            </select>
+            <input id="rewardThreshold" class="input" type="number" placeholder="Seuil (pts)" required style="width:120px">
+            <button class="btn">Ajouter</button>
+          </form>
+          <div id="rewardsList"></div>
+        </div>
+
+        <div class="card">
+          <h4>⚠️ Punitions</h4>
+          <div class="badge-row small"><span class="badge-pill">Semaine</span><span class="badge-pill">Mois</span></div>
+          <form id="addPunish" class="flex" style="margin-top:8px">
+            <input id="punishLabel" class="input" placeholder="Ex: Couche tôt" required style="flex:1">
+            <select id="punishScope">
+              <option value="weekly">Semaine</option>
+              <option value="monthly">Mois</option>
+            </select>
+            <input id="punishThreshold" class="input" type="number" placeholder="Seuil (pts)" required style="width:120px">
+            <button class="btn">Ajouter</button>
+          </form>
+          <div id="punishList"></div>
+        </div>
       </div>
     </div>
 
     <div id="tab-rules" class="tab-content">
-      <h3>Règle de bébé</h3>
+      <h3>Règles de bébé</h3>
       <div class="grid">
-        <textarea id="ruleInput" class="textarea" placeholder="Colle ici un (grand) texte de règles…"></textarea>
+        <textarea id="ruleInput" class="textarea" placeholder="Écris/colle ici ta règle. Cliquer sur 'Enregistrer' l'ajoutera à la fin de la liste."></textarea>
         <div class="flex">
-          <button class="btn" id="addRules">Enregistrer</button>
+          <button class="btn" id="addRuleBtn">Enregistrer</button>
           <button class="btn ghost" id="showRules">Règles</button>
           <button class="btn ghost" id="clearRules">Tout effacer</button>
         </div>
@@ -140,17 +195,25 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
     </div>
 
     <div id="tab-points" class="tab-content">
-      <h3>Modifier les points</h3>
+      <h3>Modifier les points & objectifs</h3>
       <div class="grid small">
-        <div class="task-row"><div class="left"><img id="sw" style="width:24px;height:24px"><span>Pipi</span></div><input id="wetPtsInput" type="number" value="2" style="width:90px"></div>
-        <div class="task-row"><div class="left"><img id="sm" style="width:24px;height:24px"><span>Sale</span></div><input id="salePtsInput" type="number" value="5" style="width:90px"></div>
-        <div class="task-row"><div class="left"><img id="ss" style="width:24px;height:24px"><span>0 couche (slip)</span></div><input id="zeroPtsInput" type="number" value="-5" style="width:90px"></div>
-        <div class="task-row"><div class="left"><span>Points - 1/verre</span></div><input id="drinkPenaltyInput" type="number" value="1" style="width:90px"></div>
+        <div class="task-row"><div class="left"><img id="sw" style="width:24px;height:24px"><span>Pipi</span></div><input id="wetPtsInput" class="input" type="number" value="2" style="width:110px"></div>
+        <div class="task-row"><div class="left"><img id="sm" style="width:24px;height:24px"><span>Sale</span></div><input id="salePtsInput" class="input" type="number" value="5" style="width:110px"></div>
+        <div class="task-row"><div class="left"><img id="ss" style="width:24px;height:24px"><span>0 couche (slip)</span></div><input id="zeroPtsInput" class="input" type="number" value="-5" style="width:110px"></div>
+        <div class="task-row"><div class="left">🍷 Pénalité par verre d'alcool</div><input id="drinkPenaltyInput" class="input" type="number" value="-1" style="width:110px"></div>
+        <hr>
+        <div class="task-row"><div class="left">🎯 Seuils <b>Semaine</b> (3 paliers)</div>
+          <div class="flex"><input id="w1" class="input" type="number" style="width:90px"><input id="w2" class="input" type="number" style="width:90px"><input id="w3" class="input" type="number" style="width:90px"></div>
+        </div>
+        <div class="task-row"><div class="left">🏆 Seuils <b>Mois</b> (3 paliers)</div>
+          <div class="flex"><input id="m1" class="input" type="number" style="width:90px"><input id="m2" class="input" type="number" style="width:90px"><input id="m3" class="input" type="number" style="width:90px"></div>
+        </div>
         <hr>
         <div id="pointsTaskList" class="grid"></div>
         <button class="btn" id="savePoints">Enregistrer</button>
       </div>
     </div>
+
   </aside>
 
   <section class="calendar-card">
@@ -163,6 +226,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
   </section>
 </main>
 
+<!-- MODALE JOUR -->
 <div class="modal" id="dayModal">
   <div class="modal-backdrop" id="mb"></div>
   <div class="modal-body">
@@ -188,13 +252,18 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
     <div class="section compact">
       <h4>Couches utilisées (statistique)</h4>
       <div class="pills flex">
-        <span class="pill" data-n="0">0</span><span class="pill" data-n="1">1</span><span class="pill" data-n="2">2</span><span class="pill" data-n="3">3</span><span class="pill" data-n="4">4</span>
+        <span class="pill" data-n="0">0</span>
+        <span class="pill" data-n="1">1</span>
+        <span class="pill" data-n="2">2</span>
+        <span class="pill" data-n="3">3</span>
+        <span class="pill" data-n="4">4</span>
       </div>
-      <div class="small">Sélectionner <b>0</b> affichera le <b>slip</b> pour la journée et appliquera -5 points.</div>
+      <div class="small">Sélectionner <b>0</b> affichera le <b>slip</b> pour la journée et appliquera la pénalité d'alcool si renseignée.</div>
     </div>
     <div class="section compact">
-      <h4>Boissons (verres)</h4>
-      <input id="drinkCount" type="number" min="0" value="0" style="width:120px">
+      <h4>Alcool</h4>
+      <div class="flex"><label>Nombre de verres bus :</label><input id="drinksInput" class="input" type="number" min="0" step="1" style="width:120px" value="0"></div>
+      <div class="small">Chaque verre enlève <b id="drinkPenaltyInfo">1</b> point (paramétrable dans "Modifier points").</div>
     </div>
     <div class="section compact">
       <div class="stat-line"><span>Points du jour</span><b id="dayPts">0</b></div>
@@ -202,6 +271,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
   </div>
 </div>
 
+<!-- MODALE REGLES LISTE -->
 <div class="modal" id="rulesModal">
   <div class="modal-backdrop" id="rb"></div>
   <div class="modal-body">
@@ -213,34 +283,57 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
   </div>
 </div>
 
-<!-- Firebase SDK (CDN modules) -->
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+<!-- Firebase SDK v10 (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
-// --- Firebase config fourni par ta capture ---
+<script>
+/*** Helpers d'UI ***/
+function setSync(status){
+  const el=document.getElementById('syncBadge');
+  if(el) el.textContent=status;
+}
+
+/*** 1) Configuration Firebase ***/
 const firebaseConfig = {
-  apiKey: "AIzaSyAmSVQKKqm9X9vUyV7XQsg5Jt2K2rXL-wM",
+  apiKey: "AIzaSyAmSVQKKqm9X9yUvy7XQsg5Jt2K2rXL-wM",
   authDomain: "dl-track.firebaseapp.com",
   projectId: "dl-track",
-  storageBucket: "dl-track.firebasestorage.app",
+  storageBucket: "dl-track.appspot.com",
   messagingSenderId: "126725220245",
   appId: "1:126725220245:web:4bc43252a9c91deadf789c",
-  measurementId: "G-9M4P6O8Q8SYD"
+  measurementId: "G-9M4P6Q8SYD"
 };
+try{
+  firebase.initializeApp(firebaseConfig);
+  setSync('Connexion…');
+}catch(e){
+  console.warn('Firebase init error', e);
+  setSync('Hors ligne');
+}
+let db;
+try{
+  db=firebase.firestore();
+}catch(e){
+  console.warn('Firestore init error', e);
+  setSync('Hors ligne');
+}
 
-// App & DB
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+// Espace via ?space=... (ex: ?space=famille)
+const spaceId=(new URLSearchParams(location.search).get('space')||'default').toLowerCase().replace(/[^a-z0-9-_]+/g,'');
+const clientId=Math.random().toString(36).slice(2);
+const docRef=db?db.collection('spaces').doc(spaceId):null;
 
-// --- Utilitaires UI ---
-const KEYS={entries:'dt_v7c_entries',tasks:'dt_v7c_tasks',rules:'dt_v7c_rules',images:'dt_v7c_images',babyRules:'dt_v7c_baby_rules',goals:'dt_v7c_goals',rewards:'dt_v7c_rewards',punish:'dt_v7c_punish'};
-function qs(id){return document.getElementById(id)}
-const syncBadge = qs('syncBadge');
-function setSync(t){syncBadge.textContent=t}
-
-// --- Données locales par défaut ---
-let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5,drinkPenalty:1};
+/*** 2) Données locales ***/
+const KEYS={
+  entries:'dt_v9_entries',tasks:'dt_v9_tasks',rules:'dt_v9_rules',images:'dt_v9_images',
+  thresholds:'dt_v9_thresholds',rewards:'dt_v9_rewards',punishments:'dt_v9_punishments',rulesArr:'dt_v9_rules_arr'
+};
+let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5,drink:-1};
+let thresholds=JSON.parse(localStorage.getItem(KEYS.thresholds)||'null')||{weekly:[30,50,80],monthly:[100,200,300]};
+let rewards=JSON.parse(localStorage.getItem(KEYS.rewards)||'null')||[];
+let punishments=JSON.parse(localStorage.getItem(KEYS.punishments)||'null')||[];
+let rulesArr=JSON.parse(localStorage.getItem(KEYS.rulesArr)||'null')||[];
 let tasks=JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
  {id:'no_alcohol',name:'No alcohol',points:1,icon:'images/no_alcohol.webp'},
  {id:'exercise',name:'Sport',points:2,icon:'images/sport.webp'},
@@ -257,227 +350,231 @@ let images=JSON.parse(localStorage.getItem(KEYS.images)||'null')||{
  slip:'images/slip.webp',
  body:'images/body.webp'
 };
-let goals=JSON.parse(localStorage.getItem(KEYS.goals)||'null')||{
-  week:[{t:30,l:'Jeune enfant'},{t:50,l:'Apprentie bébé'},{t:80,l:'Bébé à sa maman'}],
-  month:[{t:100,l:'Quitte le monde des adultes'},{t:200,l:'devient un bébé'},{t:300,l:'Vrai bébé'}]
-};
-let rewards=JSON.parse(localStorage.getItem(KEYS.rewards)||'[]');
-let punish=JSON.parse(localStorage.getItem(KEYS.punish)||'[]');
 let entries=JSON.parse(localStorage.getItem(KEYS.entries)||'{}');
-let babyRules=JSON.parse(localStorage.getItem(KEYS.babyRules)||'[]');
 
 function saveLocal(){
   localStorage.setItem(KEYS.tasks,JSON.stringify(tasks));
   localStorage.setItem(KEYS.images,JSON.stringify(images));
   localStorage.setItem(KEYS.entries,JSON.stringify(entries));
   localStorage.setItem(KEYS.rules,JSON.stringify(rules));
-  localStorage.setItem(KEYS.goals,JSON.stringify(goals));
+  localStorage.setItem(KEYS.thresholds,JSON.stringify(thresholds));
   localStorage.setItem(KEYS.rewards,JSON.stringify(rewards));
-  localStorage.setItem(KEYS.punish,JSON.stringify(punish));
-  localStorage.setItem(KEYS.babyRules,JSON.stringify(babyRules));
+  localStorage.setItem(KEYS.punishments,JSON.stringify(punishments));
+  localStorage.setItem(KEYS.rulesArr,JSON.stringify(rulesArr));
 }
-
-// --- Espace partagé (via ?space=) ---
-const params=new URLSearchParams(location.search);
-const spaceId=params.get('space')||'default';
-const spaceRef=doc(db,'spaces',spaceId);
-
-// Merge cloud->local
-function applyRemote(data){
-  if(!data) return;
-  if(data.tasks) tasks=data.tasks;
-  if(data.rules) rules=data.rules;
-  if(data.images) images=data.images;
-  if(data.entries) entries=data.entries;
-  if(data.goals) goals=data.goals;
-  if(data.rewards) rewards=data.rewards;
-  if(data.punish) punish=data.punish;
-  if(data.babyRules) babyRules=data.babyRules;
-  saveLocal(); renderAll();
+let saving=false;
+function saveCloud(){
+  if(!docRef) return;
+  if(saving) return;
+  saving=true;
+  docRef.set({tasks,images,entries,rules,thresholds,rewards,punishments,rulesArr,_clientId:clientId,updatedAt:Date.now()},{merge:true})
+    .then(()=>setSync('En ligne'))
+    .catch(e=>{console.warn('saveCloud error',e); setSync('Hors ligne');})
+    .finally(()=>saving=false);
 }
-
-// Push local->cloud (debounce)
-let saveTimer=null;
-async function pushRemote(){
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(async()=>{
+if(docRef){
+  docRef.onSnapshot(snap=>{
     try{
-      setSync('Connexion…');
-      await setDoc(spaceRef,{
-        tasks,rules,images,entries,goals,rewards,punish,babyRules,updatedAt:serverTimestamp()
-      },{merge:true});
-      setSync('En ligne');
-    }catch(e){ console.error(e); setSync('Hors ligne…'); }
-  },300);
+      const data=snap.data(); if(!data||data._clientId===clientId) return;
+      if(data.tasks) tasks=data.tasks;
+      if(data.images) images=data.images;
+      if(data.entries) entries=data.entries;
+      if(data.rules) rules=data.rules;
+      if(data.thresholds) thresholds=data.thresholds;
+      if(Array.isArray(data.rewards)) rewards=data.rewards;
+      if(Array.isArray(data.punishments)) punishments=data.punishments;
+      if(Array.isArray(data.rulesArr)) rulesArr=data.rulesArr;
+      saveLocal(); renderAll(); setSync('En ligne');
+    }catch(e){ console.warn('onSnapshot error',e); setSync('Hors ligne'); }
+  }, err=>{ console.warn('Snapshot subscribe error', err); setSync('Hors ligne'); });
 }
 
-// Initial read + live updates
-(async()=>{
-  try{
-    setSync('Connexion…');
-    const snap=await getDoc(spaceRef);
-    if(!snap.exists()){
-      await setDoc(spaceRef,{tasks,rules,images,entries,goals,rewards,punish,babyRules,createdAt:serverTimestamp()});
-    }else{
-      applyRemote(snap.data());
-    }
-    onSnapshot(spaceRef,(s)=>{ if(s.exists()) applyRemote(s.data()); });
-    setSync('En ligne');
-  }catch(e){ console.error(e); setSync('Hors ligne…'); }
-})();
-
-// ---------- UI logique (identique à V7) ----------
+/*** 3) Logique ***/
 function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1,drinks:0}; }
 function fmt(d){return d.toISOString().slice(0,10);}
 
-// Legend
-qs('imgClean').src=images.state_clean;
-qs('imgWet').src=images.state_wet;
-qs('imgMessy').src=images.state_messy;
-qs('imgSlip').src=images.slip;
-qs('sw').src=images.state_wet;
-qs('sm').src=images.state_messy;
-qs('ss').src=images.slip;
-
-// Tabs
-document.querySelectorAll('.tabs .tab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('show'));
-  t.classList.add('active'); qs('tab-'+t.dataset.tab).classList.add('show');
-});
-
 function dayPoints(key){
   ensureDay(key);
-  const d = entries[key];
-  const st = Number(d.diaperState)||0;
-  const isZero = Number(d.diapersUsed)===0;
-  const wetPts = Number.isFinite(Number(rules.wet))?Number(rules.wet):0;
-  const salePts = Number.isFinite(Number(rules.sale))?Number(rules.sale):0;
-  const zeroPenalty = isZero ? (Number.isFinite(Number(rules.zero))?Number(rules.zero):-5) : 0;
-  const drinkPenalty = (Number.isFinite(Number(rules.drinkPenalty))?Number(rules.drinkPenalty):1) * (Number(d.drinks)||0) * -1;
-  const diaperPts = isZero ? 0 : ((st>=1?wetPts:0)+(st===2?salePts:0));
-  const checksPts = Object.entries(d.checks).reduce((s,[id,v])=>{
-    if(!v) return s; const t=tasks.find(t=>t.id===id); const p=Number(t&&t.points); return s+(Number.isFinite(p)?p:0);
-  },0);
-  return diaperPts+checksPts+zeroPenalty+drinkPenalty;
-}
-function dayPointsSafe(k){return entries[k]?dayPoints(k):0;}
+  const d=entries[key];
+  const st=Number(d.diaperState)||0;
+  const isZero=Number(d.diapersUsed)===0;
+  const wetPts=Number.isFinite(Number(rules.wet))?Number(rules.wet):0;
+  const salePts=Number.isFinite(Number(rules.sale))?Number(rules.sale):0;
+  const zeroPenalty=isZero?(Number.isFinite(Number(rules.zero))?Number(rules.zero):-5):0;
+  const drinkPen=Number.isFinite(Number(rules.drink))?Number(rules.drink):-1;
+  const drinks=Number(d.drinks)||0;
 
-// Calendar
-const calGrid=qs('calGrid'); const monthLabel=qs('monthLabel'); let viewing=new Date(); viewing.setDate(1);
+  const diaperPts=isZero?0:((st>=1?wetPts:0)+(st===2?salePts:0));
+  const checksPts=Object.entries(d.checks||{}).reduce((s,[id,v])=>{
+    if(!v) return s; const t=tasks.find(t=>t.id===id); const p=Number(t&&t.points);
+    return s+(Number.isFinite(p)?p:0);
+  },0);
+
+  return diaperPts + checksPts + zeroPenalty + (drinks*drinkPen);
+}
+function dayPointsSafe(k){ return entries[k]?dayPoints(k):0; }
+
+/*** 4) Rendu ***/
+const calGrid=document.getElementById('calGrid'); const monthLabel=document.getElementById('monthLabel');
+
+function renderGoalsList(){
+  const ul=document.getElementById('goalsList');
+  const [w1,w2,w3]=thresholds.weekly, [m1,m2,m3]=thresholds.monthly;
+  ul.innerHTML=`
+    <li><b>Semaine</b>: ${w1} → Jeune enfant · ${w2} → Apprentie bébé · ${w3} → Bébé à sa maman</li>
+    <li><b>Mois</b>: ${m1} → Quitte le monde des adultes · ${m2} → devient un bébé · ${m3} → Vrai bébé</li>
+  `;
+}
+function goalLabel(val, arr, labels){
+  if(val>=arr[2]) return labels[2];
+  if(val>=arr[1]) return labels[1];
+  if(val>=arr[0]) return labels[0];
+  return '';
+}
+
 function firstWeekday(y,m){return (new Date(y,m,1).getDay()+6)%7;}
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
 function renderCalendar(){
   calGrid.innerHTML='';
   const days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim']; days.forEach(n=>{const h=document.createElement('div');h.className='day-head';h.textContent=n;calGrid.appendChild(h);});
-  const y=viewing.getFullYear(),m=viewing.getMonth(); monthLabel.textContent=new Date(y,m,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  const y=(viewing||new Date()).getFullYear(), m=(viewing||new Date()).getMonth();
+  monthLabel.textContent=new Date(y,m,1).toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+
   for(let i=0;i<firstWeekday(y,m);i++){const b=document.createElement('div');b.className='day';b.style.visibility='hidden';calGrid.appendChild(b);}
   const total=daysInMonth(y,m);
   for(let d=1; d<=total; d++){
     const key=fmt(new Date(y,m,d,12));
     const st=(entries[key]&&entries[key].diaperState)||0;
     let img=null;
-    if(!entries[key]){ img=images.body; }
-    else if(Number(entries[key].diapersUsed)===0){ img=images.slip; }
-    else { img = st===2?images.state_messy: st===1?images.state_wet: images.state_clean; }
+    if(!entries[key]) img=images.body;
+    else if(Number(entries[key].diapersUsed)===0) img=images.slip;
+    else img=(st===2?images.state_messy: st===1?images.state_wet: images.state_clean);
     const cell=document.createElement('div'); cell.className='day';
     cell.innerHTML=`<div class="num">${d}</div><div class="thumb">${img?`<img src="${img}" alt="">`:''}</div><div class="pts">${dayPointsSafe(key)} pts</div>`;
-    cell.onclick=()=>openDay(key); calGrid.appendChild(cell);
+    cell.onclick=()=>openDay(key);
+    calGrid.appendChild(cell);
   }
-  // weekly / monthly + diapers
-  const now=new Date(); const s=(d=>{const x=new Date(d);x.setHours(0,0,0,0);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x;})(now);
-  let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsSafe(fmt(d));}
-  let mo=0; const todayKey = fmt(new Date()); const y2=viewing.getFullYear(),m2=viewing.getMonth(),total2=daysInMonth(y2,m2);
-  let used=0, elapsed=0;
-  for(let d=1; d<=total2; d++){ const k=fmt(new Date(y2,m2,d,12)); if(k<=todayKey){ elapsed++; mo+=dayPointsSafe(k); if(entries[k]&&Number.isFinite(Number(entries[k].diapersUsed))) used+=Number(entries[k].diapersUsed)||0; } }
-  const maxDiapers=Math.max(1, elapsed*4);
-  qs('weeklyPts').textContent=w; qs('monthlyPts').textContent=mo; qs('monthDiapers').textContent=used;
-  qs('weeklyBar').style.width=Math.min(100,Math.round(100*w/100))+'%';
-  qs('monthlyBar').style.width=Math.min(100,Math.round(100*mo/400))+'%';
-  qs('diapersBar').style.width=Math.min(100,Math.round(100*used/maxDiapers))+'%';
-  // goals display text (uses defaults)
-  const wg = (w>=80?'Bébé à sa maman':w>=50?'Apprentie bébé':w>=30?'Jeune enfant':'');
-  const mg = (mo>=300?'Vrai bébé':mo>=200?'devient un bébé':mo>=100?'Quitte le monde des adultes':'');
-  qs('weeklyGoal').textContent=wg; qs('monthlyGoal').textContent=mg;
-}
-function renderGoalsList(){
-  const host=qs('goalsList'); host.innerHTML=`
-    <li><b>Semaine</b>: ${goals.week.map(g=>`${g.t} → ${g.l}`).join(' · ')}</li>
-    <li><b>Mois</b>: ${goals.month.map(g=>`${g.t} → ${g.l}`).join(' · ')}</li>
-  `;
-}
-function renderTaskList(){
-  const host=qs('taskList'); host.innerHTML='';
-  tasks.forEach((t,i)=>{
-    const row=document.createElement('div'); row.className='task-row';
-    row.innerHTML=\`<div class="left"><img src="\${t.icon}" style="width:28px;height:28px;object-fit:contain"><span>\${t.name}</span><span class="\${t.points>=0?'pos':'neg'} small">(\${t.points} pts)</span></div><button class="btn ghost" data-del="\${i}">Supprimer</button>\`;
-    row.querySelector('[data-del]').onclick=()=>{tasks.splice(i,1); saveLocal(); pushRemote(); renderTaskList(); renderPointsEditor();};
-    host.appendChild(row);
-  });
-}
-function renderPointsEditor(){
-  const host=qs('pointsTaskList'); host.innerHTML='';
-  tasks.forEach((t,i)=>{
-    const row=document.createElement('div'); row.className='task-row';
-    row.innerHTML=\`<div class="left"><img src="\${t.icon}" style="width:24px;height:24px"><span>\${t.name}</span></div><input type="number" value="\${t.points}" data-pts="\${i}" style="width:90px">\`;
-    row.querySelector('input').onchange=(e)=>{tasks[i].points=Number(e.target.value)||0; saveLocal(); pushRemote();};
-    host.appendChild(row);
-  });
-}
-function renderRewardsPunish(){
-  const rw=qs('rewards'); rw.innerHTML=''; rewards.forEach((r,i)=>{const d=document.createElement('div'); d.className='rule'; d.innerHTML=\`<span>\${r}</span><button class="btn ghost" data-i="\${i}">Supprimer</button>\`; d.querySelector('button').onclick=()=>{rewards.splice(i,1); saveLocal(); pushRemote(); renderRewardsPunish();}; rw.appendChild(d);} );
-  const pu=qs('punishments'); pu.innerHTML=''; punish.forEach((p,i)=>{const d=document.createElement('div'); d.className='rule'; d.innerHTML=\`<span>\${p}</span><button class="btn ghost" data-i="\${i}">Supprimer</button>\`; d.querySelector('button').onclick=()=>{punish.splice(i,1); saveLocal(); pushRemote(); renderRewardsPunish();}; pu.appendChild(d);} );
-}
-function renderAll(){ renderCalendar(); renderTaskList(); renderPointsEditor(); renderGoalsList(); renderRewardsPunish(); }
 
-// Add task
-qs('addTaskForm').onsubmit=(e)=>{
+  // Totaux
+  function weekStart(d){const x=new Date(d);x.setHours(0,0,0,0);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);return x;}
+  const now=new Date(); const s=weekStart(now);
+  let w=0; for(let i=0;i<7;i++){const d=new Date(s);d.setDate(s.getDate()+i); w+=dayPointsSafe(fmt(d));}
+  let mo=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); mo+=dayPointsSafe(k); }
+  // Couches (mois)
+  let used=0; for(let d=1; d<=total; d++){ const k=fmt(new Date(y,m,d,12)); if(entries[k]?.diapersUsed!=null) used+=Number(entries[k].diapersUsed)||0; }
+  const maxDiapers=Math.max(1,total*4);
+
+  document.getElementById('weeklyPts').textContent=w; 
+  document.getElementById('monthlyPts').textContent=mo;
+  document.getElementById('weeklyBar').style.width=Math.min(100,Math.round(100*w/100))+'%';
+  document.getElementById('monthlyBar').style.width=Math.min(100,Math.round(100*mo/400))+'%';
+  document.getElementById('monthDiapers').textContent=used;
+  document.getElementById('diapersBar').style.width=Math.min(100, Math.round(100*used/maxDiapers)) + '%';
+
+  document.getElementById('weeklyGoal').textContent=goalLabel(w, thresholds.weekly, ['Jeune enfant','Apprentie bébé','Bébé à sa maman']);
+  document.getElementById('monthlyGoal').textContent=goalLabel(mo, thresholds.monthly, ['Quitte le monde des adultes','devient un bébé','Vrai bébé']);
+}
+let viewing=new Date(); viewing.setDate(1);
+document.getElementById('prevMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()-1);renderCalendar();};
+document.getElementById('nextMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()+1);renderCalendar();};
+
+/*** 5) Actions ***/
+const taskList=document.getElementById('taskList');
+function renderTaskList(){
+  taskList.innerHTML='';
+  tasks.forEach((t,i)=>{
+    const row=document.createElement('div'); row.className='task-row';
+    row.innerHTML=`<div class="left"><img src="${t.icon}" style="width:28px;height:28px;object-fit:contain"><span>${t.name}</span><span class="${t.points>=0?'pos':'neg'} small">(${t.points} pts)</span></div><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    row.querySelector('[data-del]').onclick=()=>{tasks.splice(i,1); saveLocal(); saveCloud(); renderTaskList(); renderPointsEditor();};
+    taskList.appendChild(row);
+  });
+}
+document.getElementById('addTaskForm').onsubmit=(e)=>{
   e.preventDefault();
-  const name=qs('taskName').value.trim();
-  const pts=Number(qs('taskPoints').value);
-  const file=qs('taskSticker').files[0];
+  const name=document.getElementById('taskName').value.trim();
+  const pts=Number(document.getElementById('taskPoints').value);
+  const file=document.getElementById('taskSticker').files[0];
   if(!name || !Number.isFinite(pts)) return;
   function add(icon){
     tasks.push({id:name.toLowerCase().replace(/[^a-z0-9]+/g,'_'),name,points:pts,icon:icon||'images/diaper_clean.webp'});
-    qs('addTaskForm').reset(); saveLocal(); pushRemote(); renderTaskList(); renderPointsEditor();
+    saveLocal(); saveCloud(); renderTaskList(); renderPointsEditor(); e.target.reset();
   }
-  if(file){const r=new FileReader(); r.onload=e=>add(e.target.result); r.readAsDataURL(file);} else add('images/diaper_clean.webp');
+  if(file){const r=new FileReader(); r.onload=ev=>add(ev.target.result); r.readAsDataURL(file);} else add('images/diaper_clean.webp');
 };
 
-// Save points and thresholds
-qs('savePoints').onclick=()=>{
-  rules.wet=Number(qs('wetPtsInput').value)||0;
-  rules.sale=Number(qs('salePtsInput').value)||0;
-  rules.zero=Number(qs('zeroPtsInput').value); if(!Number.isFinite(rules.zero)) rules.zero=-5;
-  rules.drinkPenalty=Number(qs('drinkPenaltyInput').value)||1;
-  saveLocal(); pushRemote(); renderCalendar(); renderPointsEditor();
-  qs('wetPts').textContent=rules.wet; qs('salePts').textContent=rules.sale; qs('zeroPts').textContent=rules.zero;
+/*** 6) Points & Seuils ***/
+function renderPointsEditor(){
+  const host=document.getElementById('pointsTaskList'); host.innerHTML='';
+  tasks.forEach((t,i)=>{
+    const row=document.createElement('div'); row.className='task-row';
+    row.innerHTML=`<div class="left"><img src="${t.icon}" style="width:24px;height:24px"><span>${t.name}</span></div><input type="number" class="input" value="${t.points}" data-pts="${i}" style="width:110px">`;
+    row.querySelector('input').onchange=(e)=>{tasks[i].points=Number(e.target.value)||0; saveLocal(); };
+    host.appendChild(row);
+  });
+  // seuils
+  [document.getElementById('w1').value,document.getElementById('w2').value,document.getElementById('w3').value]=thresholds.weekly;
+  [document.getElementById('m1').value,document.getElementById('m2').value,document.getElementById('m3').value]=thresholds.monthly;
+  document.getElementById('wetPtsInput').value=rules.wet;
+  document.getElementById('salePtsInput').value=rules.sale;
+  document.getElementById('zeroPtsInput').value=rules.zero;
+  document.getElementById('drinkPenaltyInput').value=rules.drink;
+  document.getElementById('drinkPenaltyInfo').textContent=Math.abs(Number(rules.drink)||1);
+}
+document.getElementById('savePoints').onclick=()=>{
+  rules.wet=Number(document.getElementById('wetPtsInput').value)||0;
+  rules.sale=Number(document.getElementById('salePtsInput').value)||0;
+  rules.zero=Number(document.getElementById('zeroPtsInput').value); if(!Number.isFinite(rules.zero)) rules.zero=-5;
+  rules.drink=Number(document.getElementById('drinkPenaltyInput').value); if(!Number.isFinite(rules.drink)) rules.drink=-1;
+
+  thresholds.weekly=[Number(document.getElementById('w1').value)||0, Number(document.getElementById('w2').value)||0, Number(document.getElementById('w3').value)||0];
+  thresholds.monthly=[Number(document.getElementById('m1').value)||0, Number(document.getElementById('m2').value)||0, Number(document.getElementById('m3').value)||0];
+
+  saveLocal(); saveCloud(); renderTaskList(); renderCalendar(); renderPointsEditor(); renderGoalsList();
+  document.getElementById('wetPts').textContent=rules.wet;
+  document.getElementById('salePts').textContent=rules.sale;
+  document.getElementById('zeroPts').textContent=rules.zero;
 };
 
-// Rules
-function renderRulesList(){
-  const host=qs('rulesList'); host.innerHTML='';
-  if(!babyRules.length){ host.innerHTML='<div class="small">Aucune règle pour le moment.</div>'; return; }
-  babyRules.forEach((r,i)=>{
+/*** 7) Règles (liste + modale) ***/
+function renderRulesModal(){
+  const host=document.getElementById('rulesList'); host.innerHTML='';
+  if(!rulesArr.length){ host.innerHTML='<div class="small">Aucune règle pour le moment.</div>'; return; }
+  rulesArr.forEach((txt,i)=>{
     const row=document.createElement('div'); row.className='rule';
-    row.innerHTML=\`<span style="white-space:pre-wrap">\${r}</span><button class="btn ghost" data-del="\${i}">Supprimer</button>\`;
-    row.querySelector('[data-del]').onclick=()=>{babyRules.splice(i,1); saveLocal(); pushRemote(); renderRulesList();};
+    row.innerHTML=`<span style="white-space:pre-wrap">${txt}</span><button class="btn ghost" data-del="${i}">Supprimer</button>`;
+    row.querySelector('[data-del]').onclick=()=>{rulesArr.splice(i,1); saveLocal(); saveCloud(); renderRulesModal();};
     host.appendChild(row);
   });
 }
-qs('addRules').onclick=()=>{
-  const raw=qs('ruleInput').value; if(!raw.trim()) return;
-  babyRules.push(raw); qs('ruleInput').value=''; saveLocal(); pushRemote();
+document.getElementById('addRuleBtn').onclick=()=>{
+  const v=document.getElementById('ruleInput').value.trim(); if(!v) return;
+  rulesArr.push(v); document.getElementById('ruleInput').value='';
+  saveLocal(); saveCloud();
 };
-qs('showRules').onclick=()=>{ renderRulesList(); qs('rulesModal').classList.add('show'); };
-qs('clearRules').onclick=()=>{ babyRules=[]; saveLocal(); pushRemote(); };
-qs('closeR').onclick=()=>qs('rulesModal').classList.remove('show');
-qs('rb').onclick=()=>qs('rulesModal').classList.remove('show');
+document.getElementById('showRules').onclick=()=>{ renderRulesModal(); document.getElementById('rulesModal').classList.add('show'); };
+document.getElementById('clearRules').onclick=()=>{ rulesArr=[]; saveLocal(); saveCloud(); };
+document.getElementById('closeR').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
+document.getElementById('rb').onclick=()=>document.getElementById('rulesModal').classList.remove('show');
 
-// Day modal
-const modal=qs('dayModal'); const mdDate=qs('mdDate'); const stateImg=qs('stateImg'); const checklist=qs('checklist'); const dayPtsEl=qs('dayPts'); const drinkCount=qs('drinkCount'); let currentKey=null;
+/*** 8) Légendes et onglets ***/
+document.getElementById('imgClean').src=images.state_clean;
+document.getElementById('imgWet').src=images.state_wet;
+document.getElementById('imgMessy').src=images.state_messy;
+document.getElementById('imgSlip').src=images.slip;
+document.getElementById('sw').src=images.state_wet;
+document.getElementById('sm').src=images.state_messy;
+document.getElementById('ss').src=images.slip;
+
+document.querySelectorAll('.tabs .tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tabs .tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('show'));
+  t.classList.add('active'); document.getElementById('tab-'+t.dataset.tab).classList.add('show');
+});
+
+/*** 9) Modale Jour ***/
+const modal=document.getElementById('dayModal'); const mdDate=document.getElementById('mdDate'); const stateImg=document.getElementById('stateImg'); const checklist=document.getElementById('checklist'); const dayPtsEl=document.getElementById('dayPts'); let currentKey=null;
 function openDay(k){
-  currentKey=k; ensureDay(k);
+  currentKey=k; if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1,drinks:0};
   mdDate.textContent=new Date(k).toLocaleDateString('fr-FR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   const st=Number(entries[k].diaperState)||0; const base=230; const extra=(st===2)?1.15:1.0;
   stateImg.width=Math.round(base*extra); stateImg.height=Math.round(base*extra);
@@ -486,28 +583,134 @@ function openDay(k){
   tasks.forEach(t=>{
     const checked=!!entries[k].checks[t.id];
     const item=document.createElement('div'); item.className='check-item';
-    item.innerHTML=\`<img src="\${t.icon}" alt=""><label style="display:flex;gap:10px;align-items:center;"><input type="checkbox" \${checked?'checked':''}><span>\${t.name}</span><span class="small \${t.points>=0?'pos':'neg'}">(\${t.points} pts)</span></label>\`;
-    const cb=item.querySelector('input'); cb.onchange=()=>{entries[k].checks[t.id]=cb.checked; saveLocal(); pushRemote(); updateDay();};
+    item.innerHTML=`<img src="${t.icon}" alt=""><label style="display:flex;gap:10px;align-items:center;"><input type="checkbox" ${checked?'checked':''}><span>${t.name}</span><span class="small ${t.points>=0?'pos':'neg'}">(${t.points} pts)</span></label>`;
+    const cb=item.querySelector('input'); cb.onchange=()=>{entries[k].checks[t.id]=cb.checked; saveLocal(); saveCloud(); updateDay();};
     checklist.appendChild(item);
   });
   document.querySelectorAll('.pills .pill').forEach(p=>{
     const n=Number(p.dataset.n);
     p.classList.toggle('active', Number(entries[k].diapersUsed)===n);
-    p.onclick=()=>{ entries[k].diapersUsed=n; if(n===0){ entries[k].diaperState=0; } saveLocal(); pushRemote(); openDay(k); renderCalendar(); };
+    p.onclick=()=>{ 
+      entries[k].diapersUsed=n;
+      if(n===0){ entries[k].diaperState=0; }
+      saveLocal(); saveCloud(); openDay(k); renderCalendar(); 
+    };
   });
-  drinkCount.value = Number(entries[k].drinks)||0;
-  drinkCount.onchange = ()=>{ entries[k].drinks = Math.max(0, Number(drinkCount.value)||0); saveLocal(); pushRemote(); updateDay(); };
+  document.getElementById('drinksInput').value = Number(entries[k].drinks)||0;
+  document.getElementById('drinksInput').onchange = (e)=>{
+    entries[k].drinks = Math.max(0, Number(e.target.value)||0);
+    saveLocal(); saveCloud(); updateDay();
+  };
+  document.getElementById('drinkPenaltyInfo').textContent = Math.abs(Number(rules.drink)||1);
+
   dayPtsEl.textContent=dayPoints(k);
   modal.classList.add('show');
 }
 function updateDay(){ if(!currentKey) return; dayPtsEl.textContent=dayPoints(currentKey); renderCalendar(); }
-qs('closeM').onclick=()=>modal.classList.remove('show'); qs('mb').onclick=()=>modal.classList.remove('show');
-document.querySelectorAll('[data-set]').forEach(b=>{ b.onclick=()=>{ entries[currentKey].diaperState=Number(b.dataset.set)||0; saveLocal(); pushRemote(); openDay(currentKey); renderCalendar(); }; });
+document.getElementById('closeM').onclick=()=>modal.classList.remove('show'); document.getElementById('mb').onclick=()=>modal.classList.remove('show');
+document.querySelectorAll('[data-set]').forEach(b=>{ b.onclick=()=>{ entries[currentKey].diaperState=Number(b.dataset.set)||0; saveLocal(); saveCloud(); openDay(currentKey); renderCalendar(); }; });
 
-// Month nav + initial render
-qs('prevMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()-1);renderCalendar();};
-qs('nextMonth').onclick=()=>{viewing.setMonth(viewing.getMonth()+1);renderCalendar();};
-renderAll();
+/*** 10) Récompenses & Punitions (CRUD) ***/
+function renderRewardList(){
+  const host=document.getElementById('rewardsList'); host.innerHTML='';
+  if(!rewards.length){ host.innerHTML='<div class="small">Aucune récompense.</div>'; return; }
+  rewards.forEach((it,idx)=>{
+    const row=document.createElement('div'); row.className='item-row';
+    row.innerHTML=`
+      <div class="left">
+        <input value="${it.label||''}" data-f="label" style="width:260px">
+        <select data-f="scope"><option value="weekly"${it.scope==='weekly'?' selected':''}>Semaine</option><option value="monthly"${it.scope==='monthly'?' selected':''}>Mois</option></select>
+        <input type="number" value="${it.threshold||0}" data-f="threshold" style="width:110px">
+      </div>
+      <div class="right"><button class="btn ghost" data-del="${idx}">Supprimer</button></div>`;
+    row.querySelectorAll('input,select').forEach(el=>{
+      el.onchange=()=>{
+        const f=el.dataset.f;
+        rewards[idx][f]= (f==='threshold') ? Number(el.value)||0 : el.value;
+        saveLocal(); saveCloud();
+      };
+    });
+    row.querySelector('[data-del]').onclick=()=>{rewards.splice(idx,1); saveLocal(); saveCloud(); renderRewardList();};
+    host.appendChild(row);
+  });
+}
+function renderPunishList(){
+  const host=document.getElementById('punishList'); host.innerHTML='';
+  if(!punishments.length){ host.innerHTML='<div class="small">Aucune punition.</div>'; return; }
+  punishments.forEach((it,idx)=>{
+    const row=document.createElement('div'); row.className='item-row';
+    row.innerHTML=`
+      <div class="left">
+        <input value="${it.label||''}" data-f="label" style="width:260px">
+        <select data-f="scope"><option value="weekly"${it.scope==='weekly'?' selected':''}>Semaine</option><option value="monthly"${it.scope==='monthly'?' selected':''}>Mois</option></select>
+        <input type="number" value="${it.threshold||0}" data-f="threshold" style="width:110px">
+      </div>
+      <div class="right"><button class="btn ghost" data-del="${idx}">Supprimer</button></div>`;
+    row.querySelectorAll('input,select').forEach(el=>{
+      el.onchange=()=>{
+        const f=el.dataset.f;
+        punishments[idx][f]= (f==='threshold') ? Number(el.value)||0 : el.value;
+        saveLocal(); saveCloud();
+      };
+    });
+    row.querySelector('[data-del]').onclick=()=>{punishments.splice(idx,1); saveLocal(); saveCloud(); renderPunishList();};
+    host.appendChild(row);
+  });
+}
+document.getElementById('addReward').onsubmit=(e)=>{
+  e.preventDefault();
+  const label=document.getElementById('rewardLabel').value.trim();
+  const scope=document.getElementById('rewardScope').value;
+  const threshold=Number(document.getElementById('rewardThreshold').value)||0;
+  if(!label) return;
+  rewards.push({label,scope,threshold}); e.target.reset(); saveLocal(); saveCloud(); renderRewardList();
+};
+document.getElementById('addPunish').onsubmit=(e)=>{
+  e.preventDefault();
+  const label=document.getElementById('punishLabel').value.trim();
+  const scope=document.getElementById('punishScope').value;
+  const threshold=Number(document.getElementById('punishThreshold').value)||0;
+  if(!label) return;
+  punishments.push({label,scope,threshold}); e.target.reset(); saveLocal(); saveCloud(); renderPunishList();
+};
+
+/*** 11) Bootstrapping ***/
+function renderAll(){ renderTaskList(); renderPointsEditor(); renderGoalsList(); renderRewardList(); renderPunishList(); renderCalendar(); }
+
+// 11.a Premier rendu immédiat (mois visible sans interaction)
+(function bootFirstPaint(){
+  try {
+    renderGoalsList(); renderTaskList(); renderPointsEditor(); renderCalendar();
+  } catch(e) { console.warn('Boot paint error', e); }
+})();
+
+// 11.b Initialisation Firestore (avec statut de sync)
+(async function init(){
+  if(!docRef){ renderAll(); return; }
+  try{
+    const snap=await docRef.get();
+    setSync('En ligne');
+    if(snap.exists){
+      const data=snap.data();
+      if(data.tasks) tasks=data.tasks;
+      if(data.images) images=data.images;
+      if(data.entries) entries=data.entries;
+      if(data.rules) rules=data.rules;
+      if(data.thresholds) thresholds=data.thresholds;
+      if(Array.isArray(data.rewards)) rewards=data.rewards;
+      if(Array.isArray(data.punishments)) punishments=data.punishments;
+      if(Array.isArray(data.rulesArr)) rulesArr=data.rulesArr;
+      saveLocal();
+    }else{
+      await docRef.set({_clientId:clientId, createdAt:Date.now(), tasks, images, rules, thresholds, rewards, punishments, rulesArr, entries});
+    }
+  }catch(e){
+    console.warn('Init cloud error', e);
+    setSync('Hors ligne');
+  }
+  renderAll();
+})();
+
 </script>
 </body>
 </html>
