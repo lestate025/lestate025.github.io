@@ -25,6 +25,9 @@ h1{
   font-size:28px;
 }
 .subtitle{text-align:center;color:var(--muted);margin-bottom:8px}
+/* sync badge */
+#syncBadge{position:fixed;right:12px;top:8px;z-index:50}
+.badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line)}
 /* Onglets images */
 .tabs{display:flex;gap:10px;margin:6px 0;justify-content:space-between}
 .tabs img.tab{width:72px;height:72px;padding:4px;border-radius:14px;border:2px solid var(--line);background:#fff;cursor:pointer;transition:.2s}
@@ -65,7 +68,6 @@ h1{
 #stateImg{display:block;margin:0 auto}
 .pills .pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;cursor:pointer}
 .pill.active{background:#edf2ff;border-color:#c7d2fe}
-.badge{display:inline-block;background:#edf2ff;color:#334;padding:4px 8px;border-radius:999px;font-size:12px}
 .textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;padding:12px;resize:vertical;background:#fff;box-shadow:inset 0 1px 0 #f7f2ff}
 .rule{border:1px dashed var(--line);border-radius:10px;padding:8px;display:flex;justify-content:space-between;align-items:center}
 hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
@@ -90,6 +92,7 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 </head>
 <body>
 <h1>Diaper Tracker</h1>
+<div id="syncBadge" class="badge">Hors ligne…</div>
 <div class="subtitle">suivie pour apprendre à devenir un vrai bébé</div>
 
 <main class="container">
@@ -285,7 +288,13 @@ hr{border:none;border-top:1px dashed var(--line);margin:10px 0}
 <script src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
 <script>
-/*** 1) Configuration Firebase (tes valeurs) ***/
+/*** Helpers d'UI ***/
+function setSync(status){
+  const el=document.getElementById('syncBadge');
+  if(el) el.textContent=status;
+}
+
+/*** 1) Configuration Firebase ***/
 const firebaseConfig = {
   apiKey: "AIzaSyAmSVQKKqm9X9yUvy7XQsg5Jt2K2rXL-wM",
   authDomain: "dl-track.firebaseapp.com",
@@ -295,26 +304,36 @@ const firebaseConfig = {
   appId: "1:126725220245:web:4bc43252a9c91deadf789c",
   measurementId: "G-9M4P6Q8SYD"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+try{
+  firebase.initializeApp(firebaseConfig);
+  setSync('Connexion…');
+}catch(e){
+  console.warn('Firebase init error', e);
+  setSync('Hors ligne');
+}
+let db;
+try{
+  db=firebase.firestore();
+}catch(e){
+  console.warn('Firestore init error', e);
+  setSync('Hors ligne');
+}
 
 // Espace via ?space=... (ex: ?space=famille)
 const spaceId=(new URLSearchParams(location.search).get('space')||'default').toLowerCase().replace(/[^a-z0-9-_]+/g,'');
 const clientId=Math.random().toString(36).slice(2);
-const docRef=db.collection('spaces').doc(spaceId);
+const docRef=db?db.collection('spaces').doc(spaceId):null;
 
-/*** 2) Données locales (cache + fallback) ***/
+/*** 2) Données locales ***/
 const KEYS={
   entries:'dt_v9_entries',tasks:'dt_v9_tasks',rules:'dt_v9_rules',images:'dt_v9_images',
   thresholds:'dt_v9_thresholds',rewards:'dt_v9_rewards',punishments:'dt_v9_punishments',rulesArr:'dt_v9_rules_arr'
 };
-
 let rules=JSON.parse(localStorage.getItem(KEYS.rules)||'null')||{wet:2,sale:5,zero:-5,drink:-1};
 let thresholds=JSON.parse(localStorage.getItem(KEYS.thresholds)||'null')||{weekly:[30,50,80],monthly:[100,200,300]};
-let rewards=JSON.parse(localStorage.getItem(KEYS.rewards)||'null')||[];       // {label, scope:'weekly'|'monthly', threshold}
-let punishments=JSON.parse(localStorage.getItem(KEYS.punishments)||'null')||[]; // idem
-let rulesArr=JSON.parse(localStorage.getItem(KEYS.rulesArr)||'null')||[];      // tableau de règles (texte)
-
+let rewards=JSON.parse(localStorage.getItem(KEYS.rewards)||'null')||[];
+let punishments=JSON.parse(localStorage.getItem(KEYS.punishments)||'null')||[];
+let rulesArr=JSON.parse(localStorage.getItem(KEYS.rulesArr)||'null')||[];
 let tasks=JSON.parse(localStorage.getItem(KEYS.tasks)||'null')||[
  {id:'no_alcohol',name:'No alcohol',points:1,icon:'images/no_alcohol.webp'},
  {id:'exercise',name:'Sport',points:2,icon:'images/sport.webp'},
@@ -345,23 +364,30 @@ function saveLocal(){
 }
 let saving=false;
 function saveCloud(){
+  if(!docRef) return;
   if(saving) return;
   saving=true;
   docRef.set({tasks,images,entries,rules,thresholds,rewards,punishments,rulesArr,_clientId:clientId,updatedAt:Date.now()},{merge:true})
+    .then(()=>setSync('En ligne'))
+    .catch(e=>{console.warn('saveCloud error',e); setSync('Hors ligne');})
     .finally(()=>saving=false);
 }
-docRef.onSnapshot(snap=>{
-  const data=snap.data(); if(!data||data._clientId===clientId) return;
-  if(data.tasks) tasks=data.tasks;
-  if(data.images) images=data.images;
-  if(data.entries) entries=data.entries;
-  if(data.rules) rules=data.rules;
-  if(data.thresholds) thresholds=data.thresholds;
-  if(Array.isArray(data.rewards)) rewards=data.rewards;
-  if(Array.isArray(data.punishments)) punishments=data.punishments;
-  if(Array.isArray(data.rulesArr)) rulesArr=data.rulesArr;
-  saveLocal(); renderAll();
-});
+if(docRef){
+  docRef.onSnapshot(snap=>{
+    try{
+      const data=snap.data(); if(!data||data._clientId===clientId) return;
+      if(data.tasks) tasks=data.tasks;
+      if(data.images) images=data.images;
+      if(data.entries) entries=data.entries;
+      if(data.rules) rules=data.rules;
+      if(data.thresholds) thresholds=data.thresholds;
+      if(Array.isArray(data.rewards)) rewards=data.rewards;
+      if(Array.isArray(data.punishments)) punishments=data.punishments;
+      if(Array.isArray(data.rulesArr)) rulesArr=data.rulesArr;
+      saveLocal(); renderAll(); setSync('En ligne');
+    }catch(e){ console.warn('onSnapshot error',e); setSync('Hors ligne'); }
+  }, err=>{ console.warn('Snapshot subscribe error', err); setSync('Hors ligne'); });
+}
 
 /*** 3) Logique ***/
 function ensureDay(k){ if(!entries[k]) entries[k]={diaperState:0,checks:{},diapersUsed:1,drinks:0}; }
@@ -650,9 +676,20 @@ document.getElementById('addPunish').onsubmit=(e)=>{
 
 /*** 11) Bootstrapping ***/
 function renderAll(){ renderTaskList(); renderPointsEditor(); renderGoalsList(); renderRewardList(); renderPunishList(); renderCalendar(); }
+
+// 11.a Premier rendu immédiat (mois visible sans interaction)
+(function bootFirstPaint(){
+  try {
+    renderGoalsList(); renderTaskList(); renderPointsEditor(); renderCalendar();
+  } catch(e) { console.warn('Boot paint error', e); }
+})();
+
+// 11.b Initialisation Firestore (avec statut de sync)
 (async function init(){
+  if(!docRef){ renderAll(); return; }
   try{
     const snap=await docRef.get();
+    setSync('En ligne');
     if(snap.exists){
       const data=snap.data();
       if(data.tasks) tasks=data.tasks;
@@ -667,7 +704,10 @@ function renderAll(){ renderTaskList(); renderPointsEditor(); renderGoalsList();
     }else{
       await docRef.set({_clientId:clientId, createdAt:Date.now(), tasks, images, rules, thresholds, rewards, punishments, rulesArr, entries});
     }
-  }catch(e){ console.warn('Init cloud error', e); }
+  }catch(e){
+    console.warn('Init cloud error', e);
+    setSync('Hors ligne');
+  }
   renderAll();
 })();
 
